@@ -288,11 +288,11 @@ tag_plugins:
 
   # {% quot %}
   quot:
-    default: # 可以自行配置多种图标方案
-      prefix: https://s2.loli.net/2022/01/04/vsTB5pGrIHfPxSj.png
-      suffix: https://s2.loli.net/2022/01/04/NORdtjlAhifZSns.png
+    default:
+      prefix: /images/quot_default_pre.png
+      suffix: /images/quot_default_suf.png
     hashtag:
-      prefix: https://s2.loli.net/2022/01/04/UvHcsa73jQPnobq.png
+      prefix: /images/quot_hashtag.png
 
   # {% emoji %}
   emoji:
@@ -302,6 +302,12 @@ tag_plugins:
     aru: https://fastly.jsdelivr.net/gh/cdn-x/emoji/aru-l/%s.gif
     tieba: https://fastly.jsdelivr.net/gh/cdn-x/emoji/tieba/%s.png
 
+  # 可选迁移回本地源，示例如下
+  # emoji:
+  #   default: /thirdparty/emoji/qq/%s.gif
+  #   twemoji: https://registry.npmmirror.com/twemoji/11.3.0/files/2/svg/%s.svg
+  #   qq: /thirdparty/emoji/qq/%s.gif
+  #   tieba: /thirdparty/emoji/tieba/%s.png
   # {% image %}
   image:
     fancybox: false # true, false
@@ -482,7 +488,7 @@ style:
       background: '#202020 radial-gradient(#1a1f35 25%, #202020 100%) no-repeat fixed' # 网站背景颜色
   animated_avatar:
     animate: auto # auto, always
-    background: https://fastly.jsdelivr.net/gh/cdn-x/placeholder@1.0.2/avatar/round/rainbow64@3x.webp
+    background: /images/rainbow64@3x.webp
   codeblock:
     scrollbar: 4px
     highlightjs_theme: https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/atom-one-dark.min.css
