@@ -51,6 +51,8 @@ set_darkmode()
       --block: darken($dark-block, 4)
       --block-border: lighten($dark-block, 2)
       --block-hover: darken($dark-block,8)
+    .social-wrap
+      filter: invert(100%)
 
 if hexo-config('style.darkmode') == 'auto'
   // 系统的dark模式
