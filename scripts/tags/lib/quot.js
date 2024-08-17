@@ -7,49 +7,56 @@
  *
  */
 
-'use strict'
+"use strict";
 
-module.exports = ctx => function(args) {
-  var el = ''
-  args = ctx.args.map(args, ['el', 'icon'], ['text'])
-  if (!args.el) {
-    args.el = 'p'
-  }
+module.exports = (ctx) =>
+  function (args) {
+    var el = "";
+    args = ctx.args.map(args, ["el", "icon"], ["text"]);
+    if (!args.el) {
+      args.el = "p";
+    }
 
-  var type = ''
-  if (args.icon && args.icon != 'square' && args.icon != 'quotes') {
-    type = ' type="icon"'
-  } else {
-    type = ' type="text"'
-  }
-  function content() {
-    if (!args.icon) {
-      return args.text
+    var type = "";
+    if (args.icon && args.icon != "square" && args.icon != "quotes") {
+      type = ' type="icon"';
+    } else {
+      type = ' type="text"';
     }
-    var el = ''
-    const cfg = ctx.theme.config.tag_plugins.quot[args.icon]
-    if (cfg && cfg.prefix) {
-      el += '<img class="icon prefix" src="' + cfg.prefix + '" />'
+    function content() {
+      if (!args.icon) {
+        return args.text;
+      }
+      var el = "";
+      const cfg = ctx.theme.config.tag_plugins.quot[args.icon];
+      if (cfg && cfg.prefix) {
+        el += '<img class="icon prefix" src="' + cfg.prefix + '" />';
+      }
+      el += args.text;
+      if (cfg && cfg.suffix) {
+        el += '<img class="icon suffix" src="' + cfg.suffix + '" />';
+      }
+      return el;
     }
-    el += args.text
-    if (cfg && cfg.suffix) {
-      el += '<img class="icon suffix" src="' + cfg.suffix + '" />'
+    if (args.el.includes("h")) {
+      el += "<div" + ' class="tag-plugin quot">';
+      el +=
+        "<" + args.el + ' class="content" id="' + args.text + '"' + type + ">";
+      el +=
+        '<a href="#' +
+        args.text +
+        '" class="headerlink" title="' +
+        args.text +
+        '"></a>';
+      el += content();
+      el += "</" + args.el + ">";
+      el += "</div>";
+    } else {
+      el += "<div" + ' class="tag-plugin quot">';
+      el += "<" + args.el + ' class="content"' + type + ">";
+      el += content();
+      el += "</" + args.el + ">";
+      el += "</div>";
     }
-    return el
-  }
-  if (args.el.includes('h')) {
-    el += '<div' + ' class="tag-plugin quot">'
-    el += '<' + args.el + ' class="content" id="' + args.text + '"' + type + '>'
-    el += '<a href="#' + args.text + '" class="headerlink" title="' + args.text + '"></a>'
-    el += content()
-    el += '</' + args.el + '>'
-    el += '</div>'
-  } else {
-    el += '<div' + ' class="tag-plugin quot">'
-    el += '<' + args.el + ' class="content"' + type + '>'
-    el += content()
-    el += '</' + args.el + '>'
-    el += '</div>'
-  }
-  return el
-}
+    return el;
+  };
