@@ -25,7 +25,6 @@ function img(src) {
 module.exports = (ctx) =>
   function (args, content) {
     args = ctx.args.map(args, ["layout", "size", "ratio"]);
-    console.log(args);
     if (args.size == null) {
       args.size = ctx.theme.config.tag_plugins.gallery.size;
     }
