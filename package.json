@@ -1,12 +1,12 @@
 {
   "name": "hexo-theme-stellaris",
-  "version": "2.0.2",
+  "version": "2.0.2MOD",
   "description": "Powerful, elegant and modern Hexo theme, forked from hexo-theme-stellar.",
   "main": "package.json",
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/chiyuki0325/hexo-theme-stellaris.git"
+    "url": "https://github.com/abc1763613206/hexo-theme-stellaris.git"
   },
   "keywords": [
     "hexo",
