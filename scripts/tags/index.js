@@ -16,6 +16,7 @@ hexo.extend.tag.register('folders', require('./lib/folders')(hexo), true)
 hexo.extend.tag.register('split', require('./lib/split')(hexo), true)
 hexo.extend.tag.register('swiper', require('./lib/swiper')(hexo), true)
 hexo.extend.tag.register('gallery', require('./lib/gallery')(hexo), {ends: true});
+hexo.extend.tag.register('banner', require('./lib/banner')(hexo), true)
 
 // data
 hexo.extend.tag.register('users', require('./lib/friends')(hexo)) // 兼容语法

@@ -40,3 +40,10 @@ plugins:
   mathjax:
     cdn: https://registry.npmmirror.com/mathjax/3/files/es5/tex-mml-chtml.js #TODO: 跨版本测试
 
+# 使用本地资源
+# default:
+#   avatar: /images/avatar.svg
+#   link: /images/link.svg
+#   cover: /images/cover.svg
+#   image: /images/image.svg
+#   banner: /images/banner.jpg
