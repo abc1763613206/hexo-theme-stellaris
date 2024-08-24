@@ -1,5 +1,22 @@
 # 📑 Stellaris - 强大、优雅、现代的 Hexo 主题
 
+这是由 [@abc1763613206](https://github.com/abc1763613206) 修改的 [hexo-theme-stellaris](https://github.com/chiyuki0325/hexo-theme-stellaris) 版本，目前作为 [blog.hanlin.press](https://blog.hanlin.press) 的主题使用。
+
+主要修改：
+- 迁移部分静态资源到本地
+- 同步部分 stellar 上游特性
+
+对于本主题的安装方式，请在 clone 环节参考如下命令：
+```bash
+git submodule add https://github.com/abc1763613206/hexo-theme-stellaris.git themes/stellaris
+cd themes/stellaris
+# 由于引入了第三方库为子模块，需要进一步初始化主题中的子模块
+git submodule update --init --recursive 
+``` 
+如果您博客的主要读者群体为中国大陆用户，请在**自己博客根目录的**主题配置文件（即 `_config.stellaris.yml` ）中参考 [_config.cn.yml](./_config.cn.yml) 进行以 [npmmirror](https://npmmirror.com) 为主体的镜像源配置。请注意该配置文件仅为差分配置，请勿直接用其替换原配置文件（即 `_config.yml`）。
+
+-----
+
 hexo-theme-stellaris 分叉自 [hexo-theme-stellar](https://github.com/xaoxuu/hexo-theme-stellar)，基于[hexo-renderer-jsx](https://github.com/hexojs/hexo-renderer-jsx)，支持丰富的标签和动态数据组件。
 
 ### 安装
