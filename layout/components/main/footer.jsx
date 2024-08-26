@@ -61,12 +61,12 @@ const Footer = props => {
                 {
                     more && ((() => {
                         if ((typeof more == 'string') && more.constructor === String) {
-                            return <p>{more}</p>
+                            return <p>{parse(markdown(more))}</p>
                         } else if ((typeof more == 'object') && more.constructor === Array) {
                             const elements = [];
                             more.forEach((item, i) => {
                                 elements.push(
-                                    <p key={item}>{item}</p>
+                                    <p key={item}>{parse(markdown(item))}</p>
                                 );
                             });
                             return elements;
