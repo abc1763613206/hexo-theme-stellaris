@@ -206,6 +206,7 @@ module.exports = function Head(props) {
             <meta name="force-rendering" content="webkit"/>
             <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
             <meta name="HandheldFriendly" content="true"/>
+            <meta name="mobile-web-app-capable" content="yes"></meta>
             <meta name="apple-mobile-web-app-capable" content="yes"/>
             <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
