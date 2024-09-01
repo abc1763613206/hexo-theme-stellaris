@@ -30,7 +30,7 @@ const GitHubIssues = props => {
                 </div>
             }
             <div className="widget-body fs14">
-                <div className="tag-plugin timeline stellar-timeline-api" api={api} user={props.user && props.user}/>
+                <div className="tag-plugin timeline ds-timeline" api={api} user={props.user && props.user}/>
             </div>
         </widget>
     );

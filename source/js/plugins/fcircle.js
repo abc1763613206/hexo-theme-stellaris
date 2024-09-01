@@ -75,7 +75,7 @@
       });
     },
     init: function() {
-      const els = document.getElementsByClassName('stellar-fcircle-api');
+      const els = document.getElementsByClassName('ds-fcircle');
       for (let i = 0; i < els.length; i++) {
         const el = els[i];
         const api = el.getAttribute('api');
@@ -89,5 +89,5 @@
       }
     }
   }
-  stellaris.registerThemePlugin('.stellar-fcircle-api', FCircle)
+  stellaris.registerThemePlugin('.ds-fcircle', FCircle)
 })()

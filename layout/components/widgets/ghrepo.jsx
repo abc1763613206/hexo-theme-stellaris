@@ -21,7 +21,7 @@ const GitHubRepo = props => {
     return (
         <widget className="widget-wrapper ghrepo">
             <div className="widget-body">
-                <div className="items stellar-ghinfo-api" api={theme.api_host.ghapi + '/repos/' + repo}>
+                <div className="items ds-ghinfo" api={theme.api_host.ghapi + '/repos/' + repo}>
                     <a className="repo" href={`https://github.com/${repo}`} target="_blank"
                        rel="external nofollow noopener noreferrer">
                         <div className="repo-name flex-row">
@@ -53,7 +53,7 @@ const GitHubRepo = props => {
                                 </svg>
                                 <span type="text" id="forks_count"></span>
                             </div>
-                            <div className="flex-row stellar-ghinfo-api" index="0"
+                            <div className="flex-row ds-ghinfo" index="0"
                                  api={theme.api_host.ghapi + '/repos/' + repo + '/tags'}>
                                 <svg aria-hidden="true" role="img" className="color-icon-primary" viewBox="0 0 16 16"
                                      width="1em" height="1em" fill="currentColor"

@@ -23,7 +23,7 @@ module.exports = (ctx) =>
 
     var el = '<div class="tag-plugin users-wrap">';
     if (api) {
-      el += '<div class="stellar-friends-api"';
+      el += '<div class="ds-friends"';
       el += ' api="' + api + '"';
       el += ">";
       el += '<div class="group-body"></div>';
