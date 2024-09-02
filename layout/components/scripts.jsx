@@ -29,7 +29,7 @@ const generateStellarScript = props => {
 
     const stellarTagPlugins = {}
 
-    for (const tagPlugin of ['bvideo']) {
+    for (const tagPlugin of ['bvideo', 'linkcard']) {
       if (theme.tag_plugins[tagPlugin].enabled) {
         stellarTagPlugins[tagPlugin] = theme.tag_plugins[tagPlugin]
       }

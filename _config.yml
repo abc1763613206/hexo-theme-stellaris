@@ -341,6 +341,11 @@ tag_plugins:
     # 部署后输入 https://你部署的 API/bvideo_info/
     video_info: "https://stellaris-api.chyk.ink/bvideo_info/"
 
+  linkcard:
+    enabled: true
+    # 此 API *必须*自行部署
+    # https://github.com/xaoxuu/site-info-api
+    api: "https://api.vlts.cc/site_info/v1?url="
   # {% okr o1 percent:0.5 status:normal %}
   okr:
     border: true # 是否显示边框

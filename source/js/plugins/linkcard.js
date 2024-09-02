@@ -34,7 +34,7 @@
         if (el.nodeType !== 1) return
         el.removeAttribute('cardlink');
         const link = el.href;
-        const api = 'https://api.vlts.cc/site_info/v1?url=';
+        const api = `${stellar.tag_plugins.linkcard.api}`;
         fetch(api + link).then(function(response) {
           if (response.ok) {
             return response.json();
