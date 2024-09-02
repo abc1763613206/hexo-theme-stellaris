@@ -26,7 +26,7 @@ const GitHubUser = props => {
 
     return (
         <widget className="widget-wrapper ghuser">
-            <div className="widget-body stellar-ghinfo-api"
+            <div className="widget-body ds-ghinfo"
                  api={props.theme.api_host.ghapi + '/users/' + props.username}>
                 {props.avatar &&
                     <div className="avatar">

@@ -15,7 +15,7 @@ const Timeline = props => {
             <widget className="widget-wrapper timeline">
                 <TimelineTitle {...props}/>
                 <div className="widget-body fs14">
-                    <div className={`tag-plugin timeline stellar-${props.type || "timeline"}-api`}
+                    <div className={`tag-plugin timeline ds-${props.type || "timeline"}`}
                          api={props.api ? props.api : ''}
                          user={props.user ? props.user : ''}
                          hide={props.hide ? props.hide : ''}

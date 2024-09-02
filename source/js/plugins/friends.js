@@ -66,7 +66,7 @@
       });
     },
     init: function() {
-      const els = document.getElementsByClassName('stellar-friends-api');
+      const els = document.getElementsByClassName('ds-friends');
       for (let i = 0; i < els.length; i++) {
         const el = els[i];
         const api = el.getAttribute('api');
@@ -81,5 +81,5 @@
       }
     }
   }
-  stellaris.registerThemePlugin('.stellar-friends-api', Friends)
+  stellaris.registerThemePlugin('.ds-friends', Friends)
 })()

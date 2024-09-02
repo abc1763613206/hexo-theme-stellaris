@@ -68,7 +68,7 @@
       });
     },
     init: function() {
-      const els = document.getElementsByClassName('stellar-ghinfo-api');
+      const els = document.getElementsByClassName('ds-ghinfo');
       for (let i = 0; i < els.length; i++) {
         const el = els[i]
         const api = el.getAttribute('api')
@@ -83,5 +83,5 @@
       }
     }
   }
-  stellaris.registerThemePlugin('.stellar-ghinfo-api', GitHubInfo)
+  stellaris.registerThemePlugin('.ds-ghinfo', GitHubInfo)
 })()

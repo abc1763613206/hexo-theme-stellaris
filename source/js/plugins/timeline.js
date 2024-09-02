@@ -146,7 +146,7 @@
       });
     },
     init: function() {
-      const els = document.getElementsByClassName('stellar-timeline-api');
+      const els = document.getElementsByClassName('ds-timeline');
       for (let i = 0; i < els.length; i++) {
         const el = els[i];
         const api = el.getAttribute('api');
@@ -157,5 +157,5 @@
       }
     }
   }
-  stellaris.registerThemePlugin('.stellar-timeline-api', StellarTimeline)
+  stellaris.registerThemePlugin('.ds-timeline', StellarTimeline)
 })()
