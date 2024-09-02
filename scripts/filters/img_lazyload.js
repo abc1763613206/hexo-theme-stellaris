@@ -20,7 +20,7 @@ function lazyProcess(htmlContent) {
     if (/src="data:image(.*?)/gi.test(imgTag)) {
       return imgTag;
     }
-    if (imgTag.includes(' no-lazy ')) {
+    if (imgTag.includes('no-lazy')) {
       return imgTag;
     }
     var newImgTag = imgTag;
