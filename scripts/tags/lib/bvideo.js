@@ -8,6 +8,6 @@
 module.exports = (ctx) =>
   function (args) {
     const { v_id } = ctx.args.map(args, [], ["v_id"]);
-    return `<div class="tag_plugin bvideo" v_id="${v_id}"><a href="//www.bilibili.com/video/${v_id}" target="_blank">
+    return `<div class="tag_plugin ds-bvideo" v_id="${v_id}"><a href="//www.bilibili.com/video/${v_id}" target="_blank">
     </a></div>`;
   };

@@ -58,12 +58,12 @@
       })
     },
     init: function() {
-      const els = document.getElementsByClassName('bvideo');
+      const els = document.getElementsByClassName('ds-bvideo');
       for (let i = 0; i < els.length; i++) {
         const el = els[i]
         this.layout(el)
       }
     }
   }
-  stellaris.registerThemePlugin('.bvideo', BiliCard)
+  stellaris.registerThemePlugin('.ds-bvideo', BiliCard)
 })()
