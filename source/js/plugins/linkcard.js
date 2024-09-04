@@ -1,6 +1,6 @@
 // 本插件由CardLink定制而成，原项目源码: https://github.com/Lete114/CardLink
 (() => {
-  const selector = 'a.link-card[cardlink]'
+  const selector = 'a.ds-linkcard[cardlink]'
   const CardLink = {
     renderer: function(el, obj) {
       var autofill = [];

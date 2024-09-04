@@ -24,7 +24,7 @@ module.exports = (ctx) =>
     var el = "";
     el += '<div class="tag-plugin link dis-select">';
     el +=
-      '<a class="link-card' +
+      '<a class="ds-linkcard' +
       (args.desc ? " rich" : " plain") +
       '" title="' +
       (args.title || "") +
