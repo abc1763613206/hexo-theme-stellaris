@@ -203,12 +203,15 @@ const stellaris = {
       }
     },
     themePlugins: () => {
-      // stellar js
-      if (stellar.plugins.stellar) {
-        for (let key of Object.keys(stellar.plugins.stellar)) {
-          stellar.loadScript(stellar.plugins.stellar[key], { defer: true });
-          if (key == "timeline") {
-            stellar.loadScript(stellar.plugins.marked);
+      if (stellar.plugins.data_services){
+        for (let id of Object.keys(stellar.plugins.data_services)) {
+          const plugin = stellar.plugins.data_services[id];
+          const els = document.getElementsByClassName(`ds-${id}`);
+          if (els != undefined && els.length > 0) {
+            stellar.loadScript(plugin.js, { defer: true });
+            if(id == "timeline"){
+              stellar.loadScript(stellar.plugins.marked);
+            }
           }
         }
       }
@@ -491,7 +494,7 @@ const stellaris = {
       }
     },
     themePlugins: () => {
-      if (stellar.plugins.stellar) {
+      if (stellar.plugins.data_services) {
         Object.keys(stellaris.themePlugins).forEach((selector) => {
           const els = document.querySelectorAll(selector);
           if (els != undefined && els.length > 0) {

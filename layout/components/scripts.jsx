@@ -16,9 +16,9 @@ const generateStellarScript = props => {
 
     const stellarPlugins = {
       jQuery: url_for(theme.plugins.jquery || "https://fastly.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"),
-      stellar: theme.plugins.stellar,
       marked: theme.plugins.marked,
-      instant_click: theme.plugins.instant_click
+      instant_click: theme.plugins.instant_click,
+      data_services: theme.data_services,
     }
 
     for (const plugin of ['lazyload', 'swiper', 'scrollreveal', 'fancybox', 'copycode']) {
@@ -27,13 +27,6 @@ const generateStellarScript = props => {
       }
     }
 
-    const stellarTagPlugins = {}
-
-    for (const tagPlugin of ['bvideo', 'linkcard']) {
-      if (theme.tag_plugins[tagPlugin].enabled) {
-        stellarTagPlugins[tagPlugin] = theme.tag_plugins[tagPlugin]
-      }
-    }
 
     let stellarSearch = {}
     if (theme.search.service) {
@@ -144,7 +137,6 @@ const generateStellarScript = props => {
       };
     
       stellar.plugins = Object.assign(${JSON.stringify(stellarPlugins)})
-      stellar.tag_plugins = Object.assign(${JSON.stringify(stellarTagPlugins)})
       stellar.search = Object.assign(${JSON.stringify(stellarSearch)})
 
       stellar.article = {

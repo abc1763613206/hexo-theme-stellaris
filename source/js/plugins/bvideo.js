@@ -9,7 +9,7 @@
     getVideoMessage: async function(id) {
       const type = id.slice(0, 2).toLowerCase()
       const vtype = { 'av': 'aid', 'bv': 'bvid' }[type]
-      const url = `${stellar.tag_plugins.bvideo.video_info}?vtype=${vtype}&type=${type}&id=${id}`
+      const url = `${stellar.plugins.data_services.bvideo.video_info}?vtype=${vtype}&type=${type}&id=${id}`
       const data = (await (await fetch(url)).json())['data'];
       return data ? {
           v_id: id,
@@ -32,7 +32,7 @@
             `<div class="bvideo-box">
               <div class="bvideo-cover">
                   <div class="cover-default"></div>
-                  <div class="bvideo-cover-layer" style="background-image:url(${stellar.tag_plugins.bvideo.image_proxy}${data.v_cover}@320w_200h_1c_!web-space-index-myvideo.webp)">
+                  <div class="bvideo-cover-layer" style="background-image:url(${stellar.plugins.data_services.bvideo.image_proxy}${data.v_cover}@320w_200h_1c_!web-space-index-myvideo.webp)">
                       <i class="icon-video"></i>
                   </div>
                   <span class="duration">${data.v_time}</span>

@@ -15,6 +15,8 @@ git submodule update --init --recursive
 ``` 
 如果您博客的主要读者群体为中国大陆用户，请在**自己博客根目录的**主题配置文件（即 `_config.stellaris.yml` ）中参考 [_config.cn.yml](./_config.cn.yml) 进行以 [npmmirror](https://npmmirror.com) 为主体的镜像源配置。请注意该配置文件仅为差分配置，请勿直接用其替换原配置文件（即 `_config.yml`）。
 
+因为本主题自用性质较强，因此不会过度考虑跨版本兼容性的问题，如您在追版本更新时发现错误，请自检是否发生了配置文件变更。
+
 -----
 
 hexo-theme-stellaris 分叉自 [hexo-theme-stellar](https://github.com/xaoxuu/hexo-theme-stellar)，基于[hexo-renderer-jsx](https://github.com/hexojs/hexo-renderer-jsx)，支持丰富的标签和动态数据组件。

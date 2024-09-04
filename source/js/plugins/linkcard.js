@@ -34,7 +34,7 @@
         if (el.nodeType !== 1) return
         el.removeAttribute('cardlink');
         const link = el.href;
-        const api = `${stellar.tag_plugins.linkcard.api}`;
+        const api = `${stellar.plugins.data_services.linkcard.api}`;
         fetch(api + link).then(function(response) {
           if (response.ok) {
             return response.json();

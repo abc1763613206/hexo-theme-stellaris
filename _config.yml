@@ -335,21 +335,6 @@ tag_plugins:
   hashtag:
     default_color: yellow # red, orange, yellow, green, cyan, blue, purple
 
-  # {% bvideo %}
-  bvideo:
-    enabled: true
-    # 此 API 可自行部署
-    # https://github.com/chiyuki0325/stellaris-api
-    # 部署后输入 https://你部署的 API/bilibili/?url=
-    image_proxy: "https://stellaris-api.chyk.ink/bilibili/?url="
-    # 部署后输入 https://你部署的 API/bvideo_info/
-    video_info: "https://stellaris-api.chyk.ink/bvideo_info/"
-
-  linkcard:
-    enabled: true
-    # 此 API *必须*自行部署
-    # https://github.com/xaoxuu/site-info-api
-    api: "https://api.vlts.cc/site_info/v1?url="
   # {% okr o1 percent:0.5 status:normal %}
   okr:
     border: true # 是否显示边框
@@ -380,6 +365,33 @@ tag_plugins:
     size: mix # s / m / l / xl / mix
     ratio: square # origin / square
 
+# data_services，原 stellar 内置 API，现修改为按需加载
+data_services:
+  sites: 
+    js: /js/plugins/sites.js
+  friends: 
+    js: /js/plugins/friends.js
+  ghinfo: 
+    js: /js/plugins/ghinfo.js
+  timeline: 
+    js: /js/plugins/timeline.js
+  linkcard: 
+    js: /js/plugins/linkcard.js
+    # 此 API *必须*自行部署
+    # https://github.com/xaoxuu/site-info-api
+    api: "https://api.vlts.cc/site_info/v1?url="
+  fcircle: 
+    js: /js/plugins/fcircle.js
+  bvideo: 
+    js: /js/plugins/bvideo.js
+    # 此 API 可自行部署
+    # https://github.com/chiyuki0325/stellaris-api
+    # 部署后输入 https://你部署的 API/bilibili/?url=
+    image_proxy: "https://stellaris-api.chyk.ink/bilibili/?url="
+    # 部署后输入 https://你部署的 API/bvideo_info/
+    video_info: "https://stellaris-api.chyk.ink/bvideo_info/"
+
+
 ######## JS 插件 ########
 plugins:
   ### 在头部信息中写入 dns-prefetch 和 preconnect 以加快加载
@@ -392,16 +404,6 @@ plugins:
   instant_click:
     # js: https://fastly.jsdelivr.net/npm/instantclick@3.1.0/instantclick.min.js
     js: https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/instantclick/3.1.0/instantclick.min.js
-
-  ### 主题动态布局插件
-  stellar:
-    sites: /js/plugins/sites.js
-    friends: /js/plugins/friends.js
-    ghinfo: /js/plugins/ghinfo.js
-    timeline: /js/plugins/timeline.js
-    linkcard: /js/plugins/linkcard.js
-    fcircle: /js/plugins/fcircle.js
-    bvideo: /js/plugins/bvideo.js
 
   ### 可选插件
 
