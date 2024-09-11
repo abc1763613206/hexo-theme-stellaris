@@ -1,6 +1,6 @@
 /**
  * video.js v3 | https://github.com/chiyuki0325/hexo-theme-stellaris
- * {% video src [poster] [ratio] [subtitle:subtitle-url] [subtitle_encoding:utf-8] [autoplay:false] [muted:false] [loop:false] [setting: true] [hotkey:true] [fullscreen_enabled:true] [mini_progress_bar:false] [mutex:true] [pip:false] %}
+ * {% video src [poster] [ratio] [subtitle:subtitle-url] [subtitle_encoding:utf-8] [autoplay:false] [muted:false] [loop:false] [playbackrate:true] [screenshot:true] [setting:true] [hotkey:true] [fullscreen_enabled:true] [mini_progress_bar:false] [mutex:true] [pip:true] %}
  * {% video youtube:dQw4w9WgXcQ autoplay:true %}
  * {% video bilibili:BV1GJ411x7h7 width:75% %} // width 指 CSS 中的 max-width
  */
@@ -10,7 +10,7 @@
 const crypto = require("crypto");
 
 module.exports = (ctx) => (args) => {
-  args = ctx.args.map(args, ['width', 'bilibili', 'youtube', 'ratio', 'hotkey', 'subtitle', 'subtitle_encoding', 'fullscreen_enabled', 'mini_progress_bar', 'mutex', 'pip', 'setting', 'loop', 'autoplay', 'muted', 'poster'], ['src'])
+  args = ctx.args.map(args, ['width', 'bilibili', 'youtube', 'ratio', 'hotkey', 'subtitle', 'subtitle_encoding', 'fullscreen_enabled', 'mini_progress_bar', 'mutex', 'pip', 'setting', 'loop', 'playbackrate', 'screenshot', 'autoplay', 'muted', 'poster'], ['src'])
   if (args.width == null) {
     args.width = '100%'
   }
@@ -43,9 +43,11 @@ module.exports = (ctx) => (args) => {
     fullscreenWeb: false, // 不兼容
     miniProgressBar: args.mini_progress_bar || false,
     mutex: args.mutex || true,
-    pip: args.pip || false,
+    pip: args.pip || true,
     setting: args.setting || true,
     loop: args.loop || false,
+    playbackRate: args.playbackrate || true,
+    screenshot: args.screenshot || true,
     autoplay: args.autoplay || false,
     muted: args.muted || false,
     poster: args.poster,
