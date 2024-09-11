@@ -209,8 +209,10 @@ const stellaris = {
           const els = document.getElementsByClassName(`ds-${id}`);
           if (els != undefined && els.length > 0) {
             stellar.loadScript(plugin.js, { defer: true });
-            if(id == "timeline"){
-              stellar.loadScript(stellar.plugins.marked);
+            if(plugin.ext){
+              for(let extjs of Object.values(plugin.ext)){
+                stellar.loadScript(extjs, { defer: true });
+              }
             }
           }
         }

@@ -16,7 +16,6 @@ const generateStellarScript = props => {
 
     const stellarPlugins = {
       jQuery: url_for(theme.plugins.jquery || "https://fastly.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"),
-      marked: theme.plugins.marked,
       instant_click: theme.plugins.instant_click,
       data_services: theme.data_services,
     }

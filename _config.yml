@@ -366,6 +366,7 @@ tag_plugins:
     ratio: square # origin / square
 
 # data_services，原 stellar 内置 API，现修改为按需加载
+# 参照 timeline 中的配置，在 ext 中配置需要外置引入的插件
 data_services:
   sites: 
     js: /js/plugins/sites.js
@@ -375,6 +376,9 @@ data_services:
     js: /js/plugins/ghinfo.js
   timeline: 
     js: /js/plugins/timeline.js
+    ext:
+      # marked: https://fastly.jsdelivr.net/npm/marked@4.0.2/marked.min.js
+      marked: https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/marked/4.0.2/marked.min.js
   linkcard: 
     js: /js/plugins/linkcard.js
     # 此 API *必须*自行部署
@@ -399,8 +403,7 @@ plugins:
 
   ### 必须加载的核心 JS
   jquery: https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js
-  # marked: https://fastly.jsdelivr.net/npm/marked@4.0.2/marked.min.js
-  marked: https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/marked/4.0.2/marked.min.js
+  
   instant_click:
     # js: https://fastly.jsdelivr.net/npm/instantclick@3.1.0/instantclick.min.js
     js: https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/instantclick/3.1.0/instantclick.min.js
