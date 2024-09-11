@@ -50,7 +50,7 @@ module.exports = (ctx) =>
       args.type = "timeline";
     }
     if (args.api && args.api.length > 0) {
-      el += '<div class="tag-plugin timeline ds' + args.type;
+      el += `<div class="tag-plugin timeline ds-${args.type}"`;
       el +=
         " " +
         ctx.args.joinTags(args, ["api", "user", "limit", "hide"]).join(" ");
