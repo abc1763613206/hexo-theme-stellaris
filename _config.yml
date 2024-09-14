@@ -356,9 +356,7 @@ tag_plugins:
       unfinished:
         color: red
         label: 未完成
-  # {% video %}
-  video:
-    js: https://fastly.jsdelivr.net/npm/artplayer@5.0.9/dist/artplayer.js
+
   # {% gallery %}
   gallery:
     layout: grid # grid / flow
@@ -386,6 +384,10 @@ data_services:
     api: "https://api.vlts.cc/site_info/v1?url="
   fcircle: 
     js: /js/plugins/fcircle.js
+  artplayer: 
+    js: /js/plugins/artplayer.js
+    ext:
+      artplayer: https://fastly.jsdelivr.net/npm/artplayer@5.0.9/dist/artplayer.js
   bvideo: 
     js: /js/plugins/bvideo.js
     # 此 API 可自行部署

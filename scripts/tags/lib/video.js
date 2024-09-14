@@ -55,6 +55,7 @@ module.exports = (ctx) => (args) => {
     // 移动端相关
     autoOrientation: true,
     lock: true,
+    theme: "var(--theme-highlight)"
   };
   if (args.subtitle) {
     artPlayerConfig.subtitle = {
@@ -65,39 +66,8 @@ module.exports = (ctx) => (args) => {
     };
   }
   return `
-<script src="${ctx.theme.config.tag_plugins.video.js}"></script>
-<style>
-    div#artplayer-app-${videoTagHash} {
-        width: 100%;
-        aspect-ratio: ${args.ratio || "16 / 9"};
-        border-radius: 4px;
-    }
-    div#artplayer-app-${videoTagHash} div {
-        --art-theme: var(--theme-highlight);
-    }
-</style>
-<div id="artplayer-app-${videoTagHash}">
-    加载中 ...
-</div>
-<script defer>
-    function initVideo_${videoTagHash}() {
-        try {
-        	let art = new Artplayer(${JSON.stringify(artPlayerConfig)});
-        } catch (e) {
-            if (e instanceof ReferenceError) {
-                setTimeout(() => {
-                    initVideo_${videoTagHash}()
-                }, 100)
-            }
-        }
-    }
-    try {
-        InstantClick.on('change', () => {
-            initVideo_${videoTagHash}()
-    	})
-    } catch (e) {
-    	initVideo_${videoTagHash}()
-    }
-</script>
-    `;
+  <div class="tag-plugin video ds-artplayer" id="artplayer-app-${videoTagHash}" artplayer-id="${videoTagHash}" artplayer-config="${Buffer.from(JSON.stringify(artPlayerConfig)).toString('base64')}"
+       style="aspect-ratio:${args.ratio || 16 / 9};max-width:${args.width};">
+  </div>
+  `;
 };
