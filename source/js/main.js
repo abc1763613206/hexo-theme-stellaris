@@ -208,12 +208,12 @@ const stellaris = {
           const plugin = stellar.plugins.data_services[id];
           const els = document.getElementsByClassName(`ds-${id}`);
           if (els != undefined && els.length > 0) {
-            stellar.loadScript(plugin.js, { defer: true });
             if(plugin.ext){
               for(let extjs of Object.values(plugin.ext)){
                 stellar.loadScript(extjs, { defer: true });
               }
             }
+            stellar.loadScript(plugin.js, { defer: true });
           }
         }
       }
