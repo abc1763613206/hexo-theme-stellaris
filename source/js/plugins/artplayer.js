@@ -17,6 +17,11 @@
                     } 
                 }
             }
+            const videos = document.getElementsByTagName('video');
+            for (let i = 0; i < videos.length; i++) {
+                const video = videos[i]
+                video.crossOrigin = "anonymous"
+            }
         }
     }
     stellaris.registerThemePlugin('.ds-artplayer', ArtplayerWrapper);

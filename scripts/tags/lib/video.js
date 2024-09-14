@@ -55,7 +55,7 @@ module.exports = (ctx) => (args) => {
     // 移动端相关
     autoOrientation: true,
     lock: true,
-    theme: "var(--theme-highlight)"
+    theme: "var(--theme-highlight)",
   };
   if (args.subtitle) {
     artPlayerConfig.subtitle = {
@@ -65,6 +65,9 @@ module.exports = (ctx) => (args) => {
       escape: true,
     };
   }
+  artPlayerConfig.moreVideoAttr = {
+    crossOrigin: "anonymous",
+  };
   return `
   <div class="tag-plugin video ds-artplayer" id="artplayer-app-${videoTagHash}" artplayer-id="${videoTagHash}" artplayer-config="${Buffer.from(JSON.stringify(artPlayerConfig)).toString('base64')}"
        style="aspect-ratio:${args.ratio || 16 / 9};max-width:${args.width};">
