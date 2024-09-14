@@ -387,7 +387,7 @@ data_services:
   artplayer: 
     js: /js/plugins/artplayer.js
     ext:
-      artplayer: https://fastly.jsdelivr.net/npm/artplayer@5.0.9/dist/artplayer.js
+      artplayer: https://fastly.jsdelivr.net/npm/artplayer@5.1.7/dist/artplayer.js
   bvideo: 
     js: /js/plugins/bvideo.js
     # 此 API 可自行部署
