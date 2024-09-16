@@ -396,12 +396,20 @@ data_services:
     image_proxy: "https://stellaris-api.chyk.ink/bilibili/?url="
     # 部署后输入 https://你部署的 API/bvideo_info/
     video_info: "https://stellaris-api.chyk.ink/bvideo_info/"
+  music:
+    js: /js/plugins/music.js
+    # api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&auth=:auth&r=:r"
+    css:
+      APlayer: https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css
+    ext:
+      APlayer: https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js
+      MetingJS: https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js
 
 
 ######## JS 插件 ########
 plugins:
   ### 在头部信息中写入 dns-prefetch 和 preconnect 以加快加载
-  prefetch_and_preconnect: [ "https://fastly.jsdelivr.net" ]
+  prefetch_and_preconnect: [ "https://fastly.jsdelivr.net", "https://cdn.jsdelivr.net"]
 
   ### 必须加载的核心 JS
   jquery: https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js
