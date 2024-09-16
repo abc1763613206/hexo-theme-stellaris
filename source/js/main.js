@@ -213,7 +213,14 @@ const stellaris = {
                 stellar.loadScript(extjs, { defer: true });
               }
             }
-            stellar.loadScript(plugin.js, { defer: true });
+            if(plugin.css){
+              for(let css of Object.values(plugin.css)){
+                stellar.loadCSS(css);
+              }
+            }
+            if(plugin.js){
+              stellar.loadScript(js, { defer: true });
+            }
           }
         }
       }
