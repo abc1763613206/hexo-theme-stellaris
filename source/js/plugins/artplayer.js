@@ -42,7 +42,7 @@
                             artplayers[artplayer_id].on('ready', () => {
                                 this.injectSubtitleSwitch(artplayers[artplayer_id]);
                             });
-                        }, 100)
+                        }, 1000)
                     } 
                 }
                 
