@@ -23,35 +23,41 @@
                 )
             }
         },
+        watingForArtplayer: function(callback, checkInterval = 100, timeout = 5000) {
+            let elapsedTime = 0;
+
+            const checkArtplayer = setInterval(() => {
+                elapsedTime += checkInterval;
+                if (elapsedTime >= timeout) {
+                    clearInterval(checkArtplayer);
+                    console.error('Artplayer loader timeout');
+                }
+
+                if (window.Artplayer) {
+                    console.log('Artplayer found');
+                    clearInterval(checkArtplayer);
+                    callback();
+                }
+            }, checkInterval);
+        },
         init: function() {
             let artplayers = {}
-            const els = document.getElementsByClassName('ds-artplayer');
-            for (let i = 0; i < els.length; i++) {
-                const el = els[i]
-                const artplayer_id = el.getAttribute('artplayer-id')
-                try {
+            this.watingForArtplayer(() => {
+                const els = document.getElementsByClassName('ds-artplayer');
+                for (let i = 0; i < els.length; i++) {
+                    const el = els[i]
+                    const artplayer_id = el.getAttribute('artplayer-id')
                     artplayers[artplayer_id] = new Artplayer(JSON.parse(atob(el.getAttribute('artplayer-config'))));
                     artplayers[artplayer_id].on('ready', () => {
                         this.injectSubtitleSwitch(artplayers[artplayer_id]);
                     });
-                } catch (e) {
-                    console.error(e)
-                    if (e instanceof ReferenceError) {
-                        setTimeout(() => {
-                            artplayers[artplayer_id] = new Artplayer(JSON.parse(atob(el.getAttribute('artplayer-config'))));
-                            artplayers[artplayer_id].on('ready', () => {
-                                this.injectSubtitleSwitch(artplayers[artplayer_id]);
-                            });
-                        }, 1000)
-                    } 
                 }
-                
-            }
-            const videos = document.getElementsByTagName('video');
-            for (let i = 0; i < videos.length; i++) {
-                const video = videos[i]
-                video.crossOrigin = "anonymous"
-            }
+                const videos = document.getElementsByTagName('video');
+                for (let i = 0; i < videos.length; i++) {
+                    const video = videos[i]
+                    video.crossOrigin = "anonymous"
+                }
+            });
         }
     }
     stellaris.registerThemePlugin('.ds-artplayer', ArtplayerWrapper);
