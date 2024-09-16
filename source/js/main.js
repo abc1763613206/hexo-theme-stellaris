@@ -219,7 +219,7 @@ const stellaris = {
               }
             }
             if(plugin.js){
-              stellar.loadScript(js, { defer: true });
+              stellar.loadScript(plugin.js, { defer: true });
             }
           }
         }
