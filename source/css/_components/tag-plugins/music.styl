@@ -1,0 +1,29 @@
+.tag-plugin.ds-music
+    max-width: 80%
+    margin: 1em auto
+    .aplayer
+        font-family: $ff-body
+        border-radius: $border-card
+        box-shadow: $boxshadow-card-float
+        z-index 1
+        height: 100%
+        background: var(--card)
+        .aplayer-info .aplayer-music 
+            .aplayer-title
+                color: var(--text-p1)
+            .aplayer-author
+                color: var(--text-p2)
+        .aplayer-lrc 
+            p
+                color: var(--text-p2)
+                text-align: center
+                display: var(--lrc-display)
+        .aplayer-lrc:before
+            background: linear-gradient(180deg,var(--card) 0,hsla(0,0%,100%,0));
+        .aplayer-lrc:after
+            background: linear-gradient(0,var(--card) 0,hsla(0,0%,100%,0));
+        .aplayer-time
+            .aplayer-icon
+                color: var(--text-p2)
+            
+        
