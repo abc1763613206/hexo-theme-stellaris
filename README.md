@@ -2,9 +2,12 @@
 
 这是由 [@abc1763613206](https://github.com/abc1763613206) 修改的 [hexo-theme-stellaris](https://github.com/chiyuki0325/hexo-theme-stellaris) 版本，目前作为 [blog.hanlin.press](https://blog.hanlin.press) 的主题使用。
 
+**由于该主题重构后与上游的差异较大，因此之后的上游同步更新将通过 cherry-pick 拉取，并不再提供直接的无缝迁移兼容支持，请关注 `_config.yml` 的变更。**
+
 主要修改：
 - 迁移部分静态资源到本地
 - 同步部分 stellar 上游特性
+- **添加新标签特性**
 
 对于本主题的安装方式，请在 clone 环节参考如下命令：
 ```bash
