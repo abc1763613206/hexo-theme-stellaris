@@ -550,6 +550,7 @@ const stellaris = {
     console.log(`Page loaded: ${window.location.pathname}`);
     stellaris.loadNeededCSS();
     stellaris.loadNeededPlugins();
+    stellaris.load.themePlugins();
     stellaris.initPageComponents();
     stellaris.initPlugins();
   },
