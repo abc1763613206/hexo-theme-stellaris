@@ -284,6 +284,12 @@ footer:
   # source: https://github.com/chiyuki0325/blog  # 博客源码信息
   # icp:  # ICP 备案信息
   # 主题用户越多，开发者维护和更新的积极性就越高，如果您喜欢本主题，请在适当的位置显示主题信息和仓库链接以表支持。
+  # more: 
+  # 事实上 more 与 icp 展现方式类似，您可以以单行 Markdown 展示，也可以展示多行信息，请自行探索
+  # 例：
+  # more:
+  #  - '主题：[Stellaris](https://blog.chyk.ink/wiki/stellaris/)'
+  #  - '源码：[GitHub](https://github.com/abc1763613206/hexo-theme-stellaris)'
 
 
 ######## 标签插件 ########

@@ -4,6 +4,7 @@ const Footer = props => {
     const using = `[${stellar_info('name')}](${stellar_info()})`
     const source = theme.footer.source;
     const more = theme.footer.more;
+    const icp = theme.footer.icp;
     const SiteMap = props => {
         const {theme, url_for, md_link, md_text, __} = props;
         if (theme.footer.sitemap && Object.keys(theme.footer.sitemap).length > 0) {
@@ -55,8 +56,21 @@ const Footer = props => {
                 }
                 <div>{__('footer.powered_by_1')}<a href="https://hexo.io">Hexo</a>{__('footer.powered_by_2')}</div>
                 {
-                    theme.footer.icp &&
-                    parse(markdown(theme.footer.icp))
+                    icp && ((() => {
+                        if ((typeof icp == 'string') && icp.constructor === String) {
+                            return <p>{parse(markdown(icp))}</p>
+                        } else if ((typeof icp == 'object') && icp.constructor === Array) {
+                            const elements = [];
+                            icp.forEach((item, i) => {
+                                elements.push(
+                                    <p key={item}>{parse(markdown(item))}</p>
+                                );
+                            });
+                            return elements;
+                        } else {
+                            return <></>;
+                        }
+                    })())
                 }
                 {
                     more && ((() => {
