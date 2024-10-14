@@ -1,6 +1,6 @@
 ######## hexo-theme-stellaris ########
 stellar:
-  version: '2.0.4MOD'
+  version: '2.1.0MOD'
   homepage: 'https://blog.chyk.ink/wiki/stellaris/'
   repo: 'https://github.com/abc1763613206/hexo-theme-stellaris'
   cdn_css:  # 如果你使用 CDN，可以上传 /css/main.css 并在此输入对应的链接
@@ -309,6 +309,8 @@ tag_plugins:
       suffix: /images/quot_default_suf.png
     hashtag:
       prefix: /images/quot_hashtag.png
+    question:
+      prefix: ph:seal-question-fill
 
   # {% emoji %}
   emoji:
