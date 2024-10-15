@@ -55,6 +55,13 @@ module.exports = hexo => {
   }
   hexo.theme.config.data['widgets'] = widgets;
 
+  // merge icons: 简单覆盖合并
+  var icons = hexo.render.renderSync({ path: path.join(hexo.theme_dir, '_data/icons.yml'), engine: 'yaml' })
+  if (data.icons) {
+    icons = Object.assign({}, icons, data.icons)
+  }
+  hexo.theme.config.icons = icons
+
   // default menu
   if (hexo.theme.config.sidebar.menu == undefined) {
     hexo.theme.config.sidebar.menu = [];
