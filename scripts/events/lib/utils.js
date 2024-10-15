@@ -80,7 +80,7 @@ module.exports = hexo => {
         result = key
       }
       if (result.startsWith('/') || result.startsWith('https://') || result.startsWith('http://')) {
-        return `<img ${args?.length > 0 ? args : ''} src="${result}" />`
+        return `<img no-lazy ${args?.length > 0 ? args : ''} src="${result}" />`
       } else {
         return result
       }

@@ -344,6 +344,10 @@ tag_plugins:
   hashtag:
     default_color: yellow # red, orange, yellow, green, cyan, blue, purple
 
+  icon:
+    # 留空时，图标和文字颜色相同
+    default_color: accent # theme, accent, red, orange, yellow, green, cyan, blue, purple
+  
   # {% button 标题 链接 %}
   button:
     default_color: cyan # theme, accent, red, orange, yellow, green, cyan, blue, purple
