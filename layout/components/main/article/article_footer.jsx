@@ -196,11 +196,32 @@ const ArticleFooter = props => {
         return <></>
     }
 
+    const WechatSection = props => {
+        const {page, __} = props;
+        if (page.wechat && page.wechat.length > 0) {
+            return (
+                <section id="wechat">
+                    <div className="header">
+                        <span>{__('meta.wechat')}</span>
+                    </div>
+                    <div className="body">
+                        <a className="wechat-link" href={page.wechat}>
+                            <input className="copy-area" value={page.wechat} readOnly={true}/>
+                        </a>
+                    </div>
+                </section>
+            )
+        } else {
+            return <></>
+        }
+    }
+
     return (
         <div className="article-footer reveal fs14">
             <ReferencesSection {...props}/>
             <LicenseSection {...props}/>
             <ShareSection {...props}/>
+            <WechatSection {...props}/>
         </div>
     )
 }

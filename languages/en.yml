@@ -28,6 +28,7 @@ meta:
   created: 'Posted on'
   updated: 'Updated on'
   license: License
+  wechat: Follow on WeChat
   share: Share
   date_suffix:
     just: Just
