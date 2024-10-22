@@ -95,7 +95,7 @@ const OpenGraphArguments = (props) => {
 
     let result = [];
 
-    if (page.cover !== undefined && page.layout === 'post' && page.cover.includes('/')) {
+    if (page.cover !== undefined && page.cover.includes('/')) {
         result.push(<OG name="og:image" content={page.cover} escape={false}/>);
     } else {
         images.forEach(path => {
