@@ -85,6 +85,7 @@ article:
     # pnpm i hexo-related-popular-posts
     enabled: false
     max_count: 5
+    disable_at_server_render: true # 在使用内置服务端渲染时禁用此功能，建议启用，否则在源文件修改触发重新渲染时会出现错误
   outdated_check:
     # 文章过期检查，在文章发布后多少个月提示文章可能过期
     enabled: true
