@@ -73,6 +73,11 @@ const Footer = props => {
                     })())
                 }
                 {
+                    (theme.server_render.footer && theme.server_render.status) ? (
+                        <div>{__('footer.server_render')}</div>
+                    ) : <></>
+                }
+                {
                     more && ((() => {
                         if ((typeof more == 'string') && more.constructor === String) {
                             return <p>{parse(markdown(more))}</p>

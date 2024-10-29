@@ -7,6 +7,10 @@ stellar:
   cdn_js:  # 如果你使用 CDN，可以上传 /js/main.js 并在此输入对应的链接
 
 
+server_render: 
+  status: false # 该值在使用 `hexo s` 通过服务端渲染时会设置为 true
+  footer: false # 是否在网页底部显示服务器端渲染提示
+
 ######## 网页头部信息 ########
 head:
   open_graph:
