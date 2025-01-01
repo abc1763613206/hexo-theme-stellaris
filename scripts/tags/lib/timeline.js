@@ -29,9 +29,7 @@ function layoutNodeTitle(ctx, content) {
 
 function layoutNodeContent(ctx, content, color) {
   var el = ''
-  el += `<div class="${color ? 'body fs14 colorful' : 'body fs14'}"${
-    color ? 'color="' + color + '"' : ' '
-  }>`
+  el += `<div class="${color ? 'body fs14 colorful' : 'body fs14'}"${color ? 'color="' + color + '"' : ' '}>`
   if (content && content.length > 0) {
     el += ctx.render
       .renderSync({ text: content, engine: 'markdown' })
