@@ -8,51 +8,51 @@
  * {% navbar active:1 [Home](/) [About](/about/) [Comments](#comments) %}
  */
 
-"use strict";
+'use strict'
 
 module.exports = (ctx) =>
   function (args) {
     if (args.length == 0) {
-      return;
+      return
     }
-    args = ctx.args.map(args, ["active"], ["links"]);
+    args = ctx.args.map(args, ['active'], ['links'])
     if (args.links) {
-      args.links = args.links.split(" ");
+      args.links = args.links.split(' ')
     }
-    var el = '<div class="tag-plugin navbar"><nav class="cap">';
+    var el = '<div class="tag-plugin navbar"><nav class="cap">'
     function layoutItem(a, i) {
-      var text = "";
-      var href = "";
-      var el = "<a";
+      var text = ''
+      var href = ''
+      var el = '<a'
       if ((i + 1).toString() === args.active) {
-        el += ' class="active"';
+        el += ' class="active"'
       }
-      if (a.includes("](")) {
+      if (a.includes('](')) {
         // markdown
-        let tmp = a.split("](");
+        let tmp = a.split('](')
         if (tmp.length > 1) {
-          text = tmp[0];
+          text = tmp[0]
           if (text.length > 1) {
-            text = text.substring(1, text.length);
+            text = text.substring(1, text.length)
           }
-          href = tmp[1];
+          href = tmp[1]
           if (href.length > 1) {
-            href = href.substring(0, href.length - 1);
+            href = href.substring(0, href.length - 1)
           }
-          el += ' href="' + href + '"';
+          el += ' href="' + href + '"'
         }
       } else {
-        el += ' href="#' + a + '"';
-        text = a;
+        el += ' href="#' + a + '"'
+        text = a
       }
-      el += ">";
-      el += text;
-      el += "</a>";
-      return el;
+      el += '>'
+      el += text
+      el += '</a>'
+      return el
     }
-    (args.links || []).forEach((item, i) => {
-      el += layoutItem(item, i);
-    });
-    el += "</nav></div>";
-    return el;
-  };
+    ;(args.links || []).forEach((item, i) => {
+      el += layoutItem(item, i)
+    })
+    el += '</nav></div>'
+    return el
+  }

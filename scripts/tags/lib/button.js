@@ -8,32 +8,33 @@
 
 'use strict'
 
-module.exports = ctx => function(args) {
-  args = ctx.args.map(args, ['color', 'icon', 'size'], ['text', 'url'])
-  if (!args.text) {
-    return ''
+module.exports = (ctx) =>
+  function (args) {
+    args = ctx.args.map(args, ['color', 'icon', 'size'], ['text', 'url'])
+    if (!args.text) {
+      return ''
+    }
+    if (!args.url) {
+      return ''
+    }
+    if (args.url.includes(' ')) {
+      var arr = args.url.split(' ')
+      args.url = arr.pop()
+      args.text = `${args.text} ${arr.join(' ')}`
+    }
+    if (args.color == null) {
+      args.color = ctx.theme.config.tag_plugins.button.default_color
+    }
+    var el = ''
+    el += '<a class="tag-plugin colorful button"'
+    el += ' ' + ctx.args.joinTags(args, ['color', 'size']).join(' ')
+    el += ` title="${args.text}"`
+    el += ` href="${args.url}"`
+    el += '>'
+    if (args.icon) {
+      el += ctx.utils.icon(args.icon)
+    }
+    el += `<span>${args.text}</span>`
+    el += '</a>'
+    return el
   }
-  if (!args.url) {
-    return ''
-  }
-  if (args.url.includes(' ')) {
-    var arr = args.url.split(' ')
-    args.url = arr.pop()
-    args.text = `${args.text} ${arr.join(' ')}`
-  }
-  if (args.color == null) {
-    args.color = ctx.theme.config.tag_plugins.button.default_color
-  }
-  var el = ''
-  el += '<a class="tag-plugin colorful button"'
-  el += ' ' + ctx.args.joinTags(args, ['color', 'size']).join(' ')
-  el += ` title="${args.text}"`
-  el += ` href="${args.url}"`
-  el += '>'
-  if (args.icon) {
-    el += ctx.utils.icon(args.icon)
-  }
-  el += `<span>${args.text}</span>`
-  el += '</a>'
-  return el
-}

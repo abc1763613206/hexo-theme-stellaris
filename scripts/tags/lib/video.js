@@ -5,37 +5,37 @@
  * {% video bilibili:BV1GJ411x7h7 width:75% %} // width 指 CSS 中的 max-width
  */
 
-"use strict";
+'use strict'
 
-const crypto = require("crypto");
+const crypto = require('crypto')
 
 module.exports = (ctx) => (args) => {
   args = ctx.args.map(
     args,
     [
-      "width",
-      "bilibili",
-      "youtube",
-      "ratio",
-      "hotkey",
-      "subtitle",
-      "subtitle_encoding",
-      "fullscreen_enabled",
-      "mini_progress_bar",
-      "mutex",
-      "pip",
-      "setting",
-      "loop",
-      "playbackrate",
-      "screenshot",
-      "autoplay",
-      "muted",
-      "poster",
+      'width',
+      'bilibili',
+      'youtube',
+      'ratio',
+      'hotkey',
+      'subtitle',
+      'subtitle_encoding',
+      'fullscreen_enabled',
+      'mini_progress_bar',
+      'mutex',
+      'pip',
+      'setting',
+      'loop',
+      'playbackrate',
+      'screenshot',
+      'autoplay',
+      'muted',
+      'poster',
     ],
-    ["src"]
-  );
+    ['src']
+  )
   if (args.width == null) {
-    args.width = "100%";
+    args.width = '100%'
   }
   if (args.bilibili) {
     return `<div class="tag-plugin video" style="aspect-ratio:${
@@ -44,17 +44,17 @@ module.exports = (ctx) => (args) => {
     <iframe src="https://player.bilibili.com/player.html?bvid=${
       args.bilibili
     }&autoplay=${
-      args.autoplay || "false"
+      args.autoplay || 'false'
     }" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true">
     </iframe>
     </div>
-    `;
+    `
   }
   if (args.youtube) {
-    if (args.autoplay == "true" || args.autoplay == "1") {
-      args.autoplay = "1&mute=1";
+    if (args.autoplay == 'true' || args.autoplay == '1') {
+      args.autoplay = '1&mute=1'
     } else {
-      args.autoplay = "0";
+      args.autoplay = '0'
     }
     return `<div class="tag-plugin video" style="aspect-ratio:${
       args.ratio || 16 / 9
@@ -66,9 +66,9 @@ module.exports = (ctx) => (args) => {
     }" picture-in-picture="true" allowfullscreen="true" >
     </iframe>
     </div>
-    `;
+    `
   }
-  const videoTagHash = crypto.createHash("md5").update(args.src).digest("hex");
+  const videoTagHash = crypto.createHash('md5').update(args.src).digest('hex')
   const artPlayerConfig = {
     id: videoTagHash,
     container: `#artplayer-app-${videoTagHash}`,
@@ -86,28 +86,28 @@ module.exports = (ctx) => (args) => {
     autoplay: args.autoplay || false,
     muted: args.muted || false,
     poster: args.poster,
-    lang: ctx.config.language.toLowerCase() || "zh-cn",
+    lang: ctx.config.language.toLowerCase() || 'zh-cn',
     // 移动端相关
     autoOrientation: true,
     lock: true,
-    theme: "var(--theme-highlight)",
-  };
+    theme: 'var(--theme-highlight)',
+  }
   if (args.subtitle) {
     artPlayerConfig.subtitle = {
       url: args.subtitle,
-      type: args.subtitle.split(".").slice(-1)[0],
-      encoding: args.subtitle_encoding || "utf-8",
+      type: args.subtitle.split('.').slice(-1)[0],
+      encoding: args.subtitle_encoding || 'utf-8',
       escape: true,
-    };
+    }
   }
   artPlayerConfig.moreVideoAttr = {
-    crossOrigin: "anonymous",
-  };
+    crossOrigin: 'anonymous',
+  }
   return `
   <div class="tag-plugin video ds-artplayer" id="artplayer-app-${videoTagHash}" artplayer-id="${videoTagHash}" artplayer-config="${Buffer.from(
     JSON.stringify(artPlayerConfig)
-  ).toString("base64")}"
+  ).toString('base64')}"
        style="aspect-ratio:${args.ratio || 16 / 9};max-width:${args.width};">
   </div>
-  `;
-};
+  `
+}

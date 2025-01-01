@@ -9,27 +9,28 @@
 
 'use strict'
 
-module.exports = ctx => function(args) {
-  args = ctx.args.map(args, ['color', 'style', 'height'], ['key', 'text'])
-  if (args.color == null) {
-    args.color = ctx.theme.config.tag_plugins.icon.default_color
+module.exports = (ctx) =>
+  function (args) {
+    args = ctx.args.map(args, ['color', 'style', 'height'], ['key', 'text'])
+    if (args.color == null) {
+      args.color = ctx.theme.config.tag_plugins.icon.default_color
+    }
+    var el = ''
+    if (args.text) {
+      el += `<div class="tag-plugin icon-wrap">`
+    }
+    el += `<span class="tag-plugin icon colorful" ${ctx.args.joinTags(args, ['color']).join(' ')}>`
+    var more = ''
+    if (args.height) {
+      more += `style="height:${args.height}"` // 兼容旧版写法
+    } else if (args.style) {
+      more += `style="${args.style}"`
+    }
+    el += ctx.utils.icon(args.key, more)
+    el += `</span>`
+    if (args.text) {
+      el += `<span class="text">${args.text}</span>`
+      el += '</div>'
+    }
+    return el
   }
-  var el = ''
-  if (args.text) {
-    el += `<div class="tag-plugin icon-wrap">`
-  }
-  el += `<span class="tag-plugin icon colorful" ${ctx.args.joinTags(args, ['color']).join(' ')}>`
-  var more = ''
-  if (args.height) {
-    more += `style="height:${args.height}"` // 兼容旧版写法
-  } else if (args.style) {
-    more += `style="${args.style}"`
-  }
-  el += ctx.utils.icon(args.key, more)
-  el += `</span>`
-  if (args.text) {
-    el += `<span class="text">${args.text}</span>`
-    el += '</div>'
-  }
-  return el
-}

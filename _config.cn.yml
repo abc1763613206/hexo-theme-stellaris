@@ -9,20 +9,20 @@ comments:
       - https://registry.npmmirror.com/@waline/emojis/1.2.0/files/qq
       - https://registry.npmmirror.com/@waline/emojis/1.2.0/files/tieba
       - https://registry.npmmirror.com/@waline/emojis/1.2.0/files/tw-emoji
-  
+
 tag_plugins:
   video:
     js: https://registry.npmmirror.com/artplayer/5.1.6/files/dist/artplayer.js
 
 plugins:
   jquery: https://registry.npmmirror.com/jquery/3.7.1/files/dist/jquery.min.js
-  
+
   marked: https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/marked/4.0.2/marked.min.js
-  
+
   fancybox:
     js: https://registry.npmmirror.com/@fancyapps/ui/4.0.31/files/dist/fancybox.umd.js
     css: https://registry.npmmirror.com/@fancyapps/ui/4.0.31/files/dist/fancybox.css
-  
+
   swiper:
     css: https://registry.npmmirror.com/swiper/11.1.5/files/swiper-bundle.min.css
     js: https://registry.npmmirror.com/swiper/11.1.5/files/swiper-bundle.min.js
@@ -41,10 +41,10 @@ plugins:
     cdn: https://registry.npmmirror.com/mathjax/3/files/es5/tex-mml-chtml.js #TODO: 跨版本测试
 
 data_services:
-  timeline: 
+  timeline:
     ext:
       marked: https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/marked/4.0.2/marked.min.js
-  artplayer: 
+  artplayer:
     ext:
       artplayer: https://registry.npmmirror.com/artplayer/5.1.7/files/dist/artplayer.js
   music:
@@ -53,9 +53,6 @@ data_services:
     ext:
       APlayer: https://registry.npmmirror.com/aplayer/latest/files/dist/APlayer.min.js
       MetingJS: https://registry.npmmirror.com/meting/latest/files/dist/Meting.min.js
-
-
-
 # 使用本地资源
 # default:
 #   avatar: /images/avatar.svg

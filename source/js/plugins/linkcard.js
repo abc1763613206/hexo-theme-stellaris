@@ -1,30 +1,30 @@
 // 本插件由CardLink定制而成，原项目源码: https://github.com/Lete114/CardLink
-(() => {
-  const selector = "a.ds-linkcard[cardlink]";
+;(() => {
+  const selector = 'a.ds-linkcard[cardlink]'
   const CardLink = {
     renderer: function (el, obj) {
-      var autofill = [];
-      const autofillStr = el.getAttribute("autofill");
+      var autofill = []
+      const autofillStr = el.getAttribute('autofill')
       if (autofillStr) {
-        autofill = autofillStr.split(",");
+        autofill = autofillStr.split(',')
       }
-      if (obj.title && obj.title.length > 0 && autofill.includes("title")) {
-        el.querySelector(".title").innerHTML = obj.title;
-        el.title = obj.title;
+      if (obj.title && obj.title.length > 0 && autofill.includes('title')) {
+        el.querySelector('.title').innerHTML = obj.title
+        el.title = obj.title
       }
-      if (obj.icon && obj.icon.length > 0 && autofill.includes("icon")) {
-        el.querySelector(".img").style =
-          'background-image: url("' + obj.icon + '");';
-        el.querySelector(".img").setAttribute("data-bg", obj.icon);
+      if (obj.icon && obj.icon.length > 0 && autofill.includes('icon')) {
+        el.querySelector('.img').style =
+          'background-image: url("' + obj.icon + '");'
+        el.querySelector('.img').setAttribute('data-bg', obj.icon)
       }
-      let desc = el.querySelector(".desc");
+      let desc = el.querySelector('.desc')
       if (
         desc &&
         obj.desc &&
         obj.desc.length > 0 &&
-        autofill.includes("desc")
+        autofill.includes('desc')
       ) {
-        desc.innerHTML = obj.desc;
+        desc.innerHTML = obj.desc
       }
     },
     /**
@@ -35,33 +35,33 @@
     setCardLink: function (nodes) {
       // If the `nodes` do not contain a `forEach` method, then the default `a[cardlink]` is used
       nodes =
-        "forEach" in (nodes || {})
+        'forEach' in (nodes || {})
           ? nodes
-          : document.querySelectorAll("a[cardlink]");
+          : document.querySelectorAll('a[cardlink]')
       nodes.forEach((el) => {
         // If it is not a tag element then it is not processed
-        if (el.nodeType !== 1) return;
-        el.removeAttribute("cardlink");
-        const link = el.href;
-        const api = `${stellar.plugins.data_services.linkcard.api}`;
+        if (el.nodeType !== 1) return
+        el.removeAttribute('cardlink')
+        const link = el.href
+        const api = `${stellar.plugins.data_services.linkcard.api}`
         fetch(api + link)
           .then(function (response) {
             if (response.ok) {
-              return response.json();
+              return response.json()
             }
-            throw new Error("Network response was not ok.");
+            throw new Error('Network response was not ok.')
           })
           .then(function (data) {
-            CardLink.renderer(el, data);
+            CardLink.renderer(el, data)
           })
           .catch(function (error) {
-            console.log(error);
-          });
-      });
+            console.log(error)
+          })
+      })
     },
     init: function () {
-      this.setCardLink(document.querySelectorAll(selector));
+      this.setCardLink(document.querySelectorAll(selector))
     },
-  };
-  stellaris.registerThemePlugin(selector, CardLink);
-})();
+  }
+  stellaris.registerThemePlugin(selector, CardLink)
+})()

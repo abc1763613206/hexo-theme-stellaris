@@ -1,6 +1,6 @@
-const ValineScript = props => {
-    const {theme} = props;
-    const generatedScript = `
+const ValineScript = (props) => {
+  const { theme } = props
+  const generatedScript = `
       function getEmojiMaps() {
         function emoji(path, idx, ext) {
           return path + "/" + path + "-" + idx + "." + ext;
@@ -46,8 +46,12 @@ const ValineScript = props => {
           "load", load_comment, false
       );
     `
-    return <script data-no-instant="true" dangerouslySetInnerHTML={{__html: generatedScript}}/>
+  return (
+    <script
+      data-no-instant='true'
+      dangerouslySetInnerHTML={{ __html: generatedScript }}
+    />
+  )
 }
 
-module.exports = ValineScript;
-
+module.exports = ValineScript

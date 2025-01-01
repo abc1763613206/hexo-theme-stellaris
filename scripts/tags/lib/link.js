@@ -5,43 +5,43 @@
  * {% link url [title] [desc:true/false] [icon:src] %}
  */
 
-"use strict";
+'use strict'
 
 module.exports = (ctx) =>
   function (args) {
-    const full_url_for = require("hexo-util").full_url_for.bind(ctx);
-    args = ctx.args.map(args, ["icon", "desc"], ["url", "title"]);
-    var autofill = [];
+    const full_url_for = require('hexo-util').full_url_for.bind(ctx)
+    args = ctx.args.map(args, ['icon', 'desc'], ['url', 'title'])
+    var autofill = []
     if (!args.title) {
-      autofill.push("title");
+      autofill.push('title')
     }
     if (!args.icon) {
-      autofill.push("icon");
+      autofill.push('icon')
     }
     if (args.desc) {
-      autofill.push("desc");
+      autofill.push('desc')
     }
-    var el = "";
-    el += '<div class="tag-plugin link dis-select">';
+    var el = ''
+    el += '<div class="tag-plugin link dis-select">'
     el +=
       '<a class="ds-linkcard' +
-      (args.desc ? " rich" : " plain") +
+      (args.desc ? ' rich' : ' plain') +
       '" title="' +
-      (args.title || "") +
+      (args.title || '') +
       '" href="' +
       args.url +
-      '"';
-    if (args.url.includes("://")) {
-      el += ' target="_blank" rel="external nofollow noopener noreferrer"';
+      '"'
+    if (args.url.includes('://')) {
+      el += ' target="_blank" rel="external nofollow noopener noreferrer"'
     }
-    el += " cardlink";
-    el += ' autofill="';
-    el += autofill.join(",");
-    el += '"';
-    el += ">";
+    el += ' cardlink'
+    el += ' autofill="'
+    el += autofill.join(',')
+    el += '"'
+    el += '>'
 
     function loadIcon() {
-      var el = "";
+      var el = ''
       if (
         ctx.theme.config.plugins.lazyload &&
         ctx.theme.config.plugins.lazyload.enable
@@ -49,49 +49,49 @@ module.exports = (ctx) =>
         el +=
           '<div class="lazy img" data-bg="' +
           (args.icon || ctx.theme.config.default.link) +
-          '"></div>';
+          '"></div>'
       } else {
         el +=
           '<div class="lazy img" style="background-image:url(&quot;' +
           (args.icon || ctx.theme.config.default.link) +
-          '&quot;)"></div>';
+          '&quot;)"></div>'
       }
-      return el;
+      return el
     }
     function loadTitle() {
-      return '<span class="title">' + (args.title || args.url) + "</span>";
+      return '<span class="title">' + (args.title || args.url) + '</span>'
     }
     function loadDesc() {
-      return '<span class="cap desc footnote"></span>';
+      return '<span class="cap desc footnote"></span>'
     }
     function loadLink() {
       return (
-        '<span class="cap link footnote">' + full_url_for(args.url) + "</span>"
-      );
+        '<span class="cap link footnote">' + full_url_for(args.url) + '</span>'
+      )
     }
 
     if (args.desc) {
       // top
-      el += '<div class="top">';
-      el += loadIcon() + loadLink();
-      el += "</div>";
+      el += '<div class="top">'
+      el += loadIcon() + loadLink()
+      el += '</div>'
       // bottom
-      el += '<div class="bottom">';
-      el += loadTitle() + loadDesc();
-      el += "</div>";
+      el += '<div class="bottom">'
+      el += loadTitle() + loadDesc()
+      el += '</div>'
     } else {
       // left
-      el += '<div class="left">';
-      el += loadTitle() + loadLink();
-      el += "</div>";
+      el += '<div class="left">'
+      el += loadTitle() + loadLink()
+      el += '</div>'
       // right
-      el += '<div class="right">';
-      el += loadIcon();
-      el += "</div>";
+      el += '<div class="right">'
+      el += loadIcon()
+      el += '</div>'
     }
 
     // end
-    el += "</a></div>";
+    el += '</a></div>'
 
-    return el;
-  };
+    return el
+  }

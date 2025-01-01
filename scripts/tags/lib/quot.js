@@ -7,53 +7,53 @@
  *
  */
 
-"use strict";
+'use strict'
 
 module.exports = (ctx) =>
   function (args) {
-    var el = "";
-    args = ctx.args.map(args, ["el", "icon", "prefix", "suffix"], ["text"]);
+    var el = ''
+    args = ctx.args.map(args, ['el', 'icon', 'prefix', 'suffix'], ['text'])
     if (!args.el) {
-      args.el = "p";
+      args.el = 'p'
     }
 
-    var type = "";
+    var type = ''
     if (args.icon || args.prefix || args.suffix) {
-      type = ' type="icon"';
+      type = ' type="icon"'
     } else {
-      type = ' type="text"';
+      type = ' type="text"'
     }
     function content() {
-      const cfg = ctx.theme.config.tag_plugins.quot[args.icon];
-      var el = "";
-      var prefix = args.prefix || cfg?.prefix;
-      var suffix = args.suffix || cfg?.suffix;
+      const cfg = ctx.theme.config.tag_plugins.quot[args.icon]
+      var el = ''
+      var prefix = args.prefix || cfg?.prefix
+      var suffix = args.suffix || cfg?.suffix
       if (prefix) {
-        el += ctx.utils.icon(prefix, 'class="icon prefix"');
+        el += ctx.utils.icon(prefix, 'class="icon prefix"')
       } else {
-        el += `<span class="empty"></span>`;
+        el += `<span class="empty"></span>`
       }
-      el += `<span class="text">${args.text}</span>`;
+      el += `<span class="text">${args.text}</span>`
       if (suffix) {
-        el += ctx.utils.icon(suffix, 'class="icon prefix"');
+        el += ctx.utils.icon(suffix, 'class="icon prefix"')
       } else {
-        el += `<span class="empty"></span>`;
+        el += `<span class="empty"></span>`
       }
-      return el;
+      return el
     }
-    if (args.el.includes("h")) {
-      el += "<div" + ' class="tag-plugin quot">';
+    if (args.el.includes('h')) {
+      el += '<div' + ' class="tag-plugin quot">'
       el +=
-        "<" + args.el + ' class="content" id="' + args.text + '"' + type + ">";
-      el += content();
-      el += "</" + args.el + ">";
-      el += "</div>";
+        '<' + args.el + ' class="content" id="' + args.text + '"' + type + '>'
+      el += content()
+      el += '</' + args.el + '>'
+      el += '</div>'
     } else {
-      el += "<div" + ' class="tag-plugin quot">';
-      el += "<" + args.el + ' class="content"' + type + ">";
-      el += content();
-      el += "</" + args.el + ">";
-      el += "</div>";
+      el += '<div' + ' class="tag-plugin quot">'
+      el += '<' + args.el + ' class="content"' + type + '>'
+      el += content()
+      el += '</' + args.el + '>'
+      el += '</div>'
     }
-    return el;
-  };
+    return el
+  }

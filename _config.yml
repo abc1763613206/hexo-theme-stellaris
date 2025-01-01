@@ -3,11 +3,10 @@ stellar:
   version: '2.2.0'
   homepage: 'https://blog.chyk.ink/wiki/stellaris/'
   repo: 'https://github.com/abc1763613206/hexo-theme-stellaris'
-  cdn_css:  # 如果你使用 CDN，可以上传 /css/main.css 并在此输入对应的链接
-  cdn_js:  # 如果你使用 CDN，可以上传 /js/main.js 并在此输入对应的链接
+  cdn_css: # 如果你使用 CDN，可以上传 /css/main.css 并在此输入对应的链接
+  cdn_js: # 如果你使用 CDN，可以上传 /js/main.js 并在此输入对应的链接
 
-
-server_render: 
+server_render:
   status: false # 该值在使用 `hexo s` 通过服务端渲染时会设置为 true
   footer: false # 是否在网页底部显示服务器端渲染提示
 
@@ -43,11 +42,11 @@ sidebar:
     # 主页
     home: search, welcome, recent
     # 博客索引页
-    blog_index: search_blog, recent  # categories/tags/archives
+    blog_index: search_blog, recent # categories/tags/archives
     # 文档索引页
-    wiki_index: search_docs, recent  # wiki
+    wiki_index: search_docs, recent # wiki
     # 其它（404 等）
-    others: search, welcome, recent  # 404 等系统页面
+    others: search, welcome, recent # 404 等系统页面
 
     ### 手动创建的页面
     # 使用 'layout: post' 的页面，如博客文章内页
@@ -57,19 +56,17 @@ sidebar:
     # 使用 'layout: page' 的自定义页面
     page: welcome, toc, search
 
-
 ######## 全局 ########
 breadcrumb:
   # 面包屑导航栏中最左侧内容
-  home: home  # config.title / config.author / home 或自定义内容
-
+  home: home # config.title / config.author / home 或自定义内容
 
 ######## 博客文章 ########
 article:
   # 如果没有指定封面，是否根据 tags 作为关键词搜索封面图片？
-  auto_cover: false  # 从 https://source.unsplash.com/ 中自动搜索封面
+  auto_cover: false # 从 https://source.unsplash.com/ 中自动搜索封面
   # 如果没有指定横幅，是否根据 tags 作为关键词搜索横幅图片？
-  auto_banner: false  # 从 https://source.unsplash.com/ 中自动搜索封面
+  auto_banner: false # 从 https://source.unsplash.com/ 中自动搜索封面
   # 如果没有指定 excerpt 和 description，将自动取多长的内容作为文章摘要？
   auto_excerpt: 200
   # 分类颜色
@@ -91,7 +88,6 @@ article:
     enabled: true
     month: 2
 
-
 ######## 文章搜索 ########
 search:
   # service 设置为 local_search 以启用文章搜索
@@ -100,8 +96,7 @@ search:
   local_search:
     # 如果你使用 CDN，可以上传 /js/search/local_search.js 并在此输入对应的链接
     js: /js/search/local_search.js
-    path: /search.json  # 搜索索引文件存放位置
-
+    path: /search.json # 搜索索引文件存放位置
 
 ######## 评论 ########
 comments:
@@ -163,7 +158,7 @@ comments:
     appId: # your appId
     appKey: # your appKey
     placeholder:
-    requiredFields: [ nick, mail ]
+    requiredFields: [nick, mail]
     enableQQ: true # Unstable avatar link
     recordIP: false # Record commenter IP
     avatar: robohash # gravatar style https://valine.js.org/avatar
@@ -171,11 +166,11 @@ comments:
     lang: zh-cn
     highlight: true
     mathJax: false
-    tagMeta: [ 博主, 小伙伴, 访客 ] # 标签要显示的文字,默认'博主,小伙伴,访客'
+    tagMeta: [博主, 小伙伴, 访客] # 标签要显示的文字,默认'博主,小伙伴,访客'
     metaPlaceholder:
-      nick: "昵称/QQ号(必填)"
-      mail: "邮箱（必填，完全保密）"
-      link: "网址(https://)"
+      nick: '昵称/QQ号(必填)'
+      mail: '邮箱（必填，完全保密）'
+      link: '网址(https://)'
 
   # Twikoo
   # https://twikoo.js.org/
@@ -191,7 +186,7 @@ comments:
     # Waline 服务器地址
     serverURL:
 
-    ### 以下配置可能 **已经过时**。请参考 Waline 官方文档。 
+    ### 以下配置可能 **已经过时**。请参考 Waline 官方文档。
     # https://waline.js.org/reference/client/props.html
 
     # If false, comment count will only be displayed in post page, not in home page
@@ -202,8 +197,6 @@ comments:
 
     # 表情互动功能，可以直接设置 true 以启用默认表情，或是设置为自定义图片
     # reaction: true
-
-
 
     # Custom locales
     # locale:
@@ -249,7 +242,6 @@ comments:
     placeholder: ''
     darkMode: auto
 
-
 ######## 页脚 ########
 footer:
   social:
@@ -290,23 +282,22 @@ footer:
   # source: https://github.com/chiyuki0325/blog  # 博客源码信息
   # icp:  # ICP 备案信息
   # 主题用户越多，开发者维护和更新的积极性就越高，如果您喜欢本主题，请在适当的位置显示主题信息和仓库链接以表支持。
-  # more: 
+  # more:
   # 事实上 more 与 icp 展现方式类似，您可以以单行 Markdown 展示，也可以展示多行信息，请自行探索
   # 例：
   # more:
   #  - '主题：[Stellaris](https://blog.chyk.ink/wiki/stellaris/)'
   #  - '源码：[GitHub](https://github.com/abc1763613206/hexo-theme-stellaris)'
 
-
 ######## 标签插件 ########
 tag_plugins:
   # {% note text %}
   note:
-    default_color: ''  # light, dark, red, orange, yellow, green, cyan, blue, purple, warning, error
+    default_color: '' # light, dark, red, orange, yellow, green, cyan, blue, purple, warning, error
 
   # {% checkbox %}
   checkbox:
-    interactive: false  # 用户是否可切换勾选
+    interactive: false # 用户是否可切换勾选
 
   # {% quot %}
   quot:
@@ -352,7 +343,7 @@ tag_plugins:
   icon:
     # 留空时，图标和文字颜色相同
     default_color: accent # theme, accent, red, orange, yellow, green, cyan, blue, purple
-  
+
   # {% button 标题 链接 %}
   button:
     default_color: cyan # theme, accent, red, orange, yellow, green, cyan, blue, purple
@@ -388,36 +379,36 @@ tag_plugins:
 # data_services，原 stellar 内置 API，现修改为按需加载
 # 参照 timeline 中的配置，在 ext 中配置需要外置引入的插件
 data_services:
-  sites: 
+  sites:
     js: /js/plugins/sites.js
-  friends: 
+  friends:
     js: /js/plugins/friends.js
-  ghinfo: 
+  ghinfo:
     js: /js/plugins/ghinfo.js
-  timeline: 
+  timeline:
     js: /js/plugins/timeline.js
     ext:
       # marked: https://fastly.jsdelivr.net/npm/marked@4.0.2/marked.min.js
       marked: https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/marked/4.0.2/marked.min.js
-  linkcard: 
+  linkcard:
     js: /js/plugins/linkcard.js
     # 此 API *必须*自行部署
     # https://github.com/xaoxuu/site-info-api
-    api: "https://api.vlts.cc/site_info/v1?url="
-  fcircle: 
+    api: 'https://api.vlts.cc/site_info/v1?url='
+  fcircle:
     js: /js/plugins/fcircle.js
-  artplayer: 
+  artplayer:
     js: /js/plugins/artplayer.js
     ext:
       artplayer: https://fastly.jsdelivr.net/npm/artplayer@5.1.7/dist/artplayer.js
-  bvideo: 
+  bvideo:
     js: /js/plugins/bvideo.js
     # 此 API 可自行部署
     # https://github.com/chiyuki0325/stellaris-api
     # 部署后输入 https://你部署的 API/bilibili/?url=
-    image_proxy: "https://stellaris-api.chyk.ink/bilibili/?url="
+    image_proxy: 'https://stellaris-api.chyk.ink/bilibili/?url='
     # 部署后输入 https://你部署的 API/bvideo_info/
-    video_info: "https://stellaris-api.chyk.ink/bvideo_info/"
+    video_info: 'https://stellaris-api.chyk.ink/bvideo_info/'
   music:
     js: /js/plugins/music.js
     # api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&auth=:auth&r=:r"
@@ -427,15 +418,15 @@ data_services:
       APlayer: https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js
       MetingJS: https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js
 
-
 ######## JS 插件 ########
 plugins:
   ### 在头部信息中写入 dns-prefetch 和 preconnect 以加快加载
-  prefetch_and_preconnect: [ "https://fastly.jsdelivr.net", "https://cdn.jsdelivr.net"]
+  prefetch_and_preconnect:
+    ['https://fastly.jsdelivr.net', 'https://cdn.jsdelivr.net']
 
   ### 必须加载的核心 JS
   jquery: https://fastly.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js
-  
+
   instant_click:
     # js: https://fastly.jsdelivr.net/npm/instantclick@3.1.0/instantclick.min.js
     js: https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/instantclick/3.1.0/instantclick.min.js
@@ -445,7 +436,7 @@ plugins:
   # 图片懒加载
   # https://www.npmjs.com/package/vanilla-lazyload
   lazyload:
-    enabled: true  # [hexo clean && hexo s] is required after changing this value.
+    enabled: true # [hexo clean && hexo s] is required after changing this value.
     # js: https://fastly.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js
     js: https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/vanilla-lazyload/17.3.1/lazyload.min.js
     transition: blur # blur, fade
@@ -457,9 +448,9 @@ plugins:
     # js: https://fastly.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js
     js: https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/scrollReveal.js/4.0.9/scrollreveal.min.js
     distance: 8px
-    duration: 500  # ms
-    interval: 100  # ms
-    scale: 1  # 0.1~1
+    duration: 500 # ms
+    interval: 100 # ms
+    scale: 1 # 0.1~1
 
   # 使用 Fancybox 提供 **{% image %} 图片标签插件** 的点击放大视图
   # 注：**可能并不支持原生 Markdown 图片语法！**
@@ -506,9 +497,6 @@ plugins:
     js: /js/plugins/copycode.js
     default_text: '复制'
     success_text: '已复制'
-  
-
-
 
 ######## 样式 ########
 style:
@@ -516,8 +504,8 @@ style:
   smooth_scroll: true # true / false
   font-size:
     root: 16px
-    body: .9375rem  # 15px
-    code: 85%  # 14px
+    body: .9375rem # 15px
+    code: 85% # 14px
     codeblock: 0.8125rem # 13px
   text-align: left
   color:
@@ -558,8 +546,7 @@ style:
   custom_font_css:
     # 自定义字体
     enabled: true
-    css: "https://s1.hdslb.com/bfs/static/jinkela/long/font/regular.css"
-
+    css: 'https://s1.hdslb.com/bfs/static/jinkela/long/font/regular.css'
 
 ######## 缺省资源文件 ########
 default:
@@ -577,13 +564,11 @@ default:
 #   image: /images/image.svg
 #   banner: /images/banner.jpg
 
-
 ######## API ########
 api_host:
   ghapi: https://api.github.com
   ghraw: https://raw.githubusercontent.com
   gist: https://gist.github.com
-
 
 ######## 自定义插件 ########
 inject:
