@@ -189,22 +189,6 @@ const ImportHighlightJSTheme = (props) => {
   }
 }
 
-const ImportKatex = (props) => {
-  const { theme } = props
-  const parse = require('html-react-parser').default
-  if (theme.plugins.katex && theme.plugins.katex.enabled) {
-    return (
-      <>
-        {parse(theme.plugins.katex.min_css)}
-        {parse(theme.plugins.katex.min_js)}
-        {parse(theme.plugins.katex.auto_render_min_js)}
-      </>
-    )
-  } else {
-    return <></>
-  }
-}
-
 const Preconnect = (props) => {
   const { prefetch_and_preconnect } = props.theme.plugins
   if (prefetch_and_preconnect && prefetch_and_preconnect.length > 0) {
@@ -245,6 +229,19 @@ const InjectHead = (props) => {
   return <>{heads}</>
 }
 
+const ImportKatexCSS = (props) => {
+  const { theme } = props
+  if (theme.plugins.katex && theme.plugins.katex.enabled) {
+    const pageIncludesKatex =
+      props.page.content && props.page.content.includes('class="katex"')
+    if (pageIncludesKatex)
+      return <link rel='stylesheet' href={theme.plugins.katex.css} />
+    else return <></>
+  } else {
+    return <></>
+  }
+}
+
 module.exports = function Head(props) {
   const { stellar_info, env } = props
   return (
@@ -258,8 +255,7 @@ module.exports = function Head(props) {
       <meta name='force-rendering' content='webkit' />
       <meta httpEquiv='X-UA-Compatible' content='IE=edge,chrome=1' />
       <meta name='HandheldFriendly' content='true' />
-      <meta name='mobile-web-app-capable' content='yes'></meta>
-      <meta name='apple-mobile-web-app-capable' content='yes' />
+      <meta name='mobile-web-app-capable' content='yes' />
       <meta
         name='apple-mobile-web-app-status-bar-style'
         content='black-translucent'
@@ -301,7 +297,7 @@ module.exports = function Head(props) {
       <ImportDarkMode {...props} />
       <ImportCSS {...props} />
       <ImportHighlightJSTheme {...props} />
-      <ImportKatex {...props} />
+      <ImportKatexCSS {...props} />
 
       <InjectHead {...props} />
     </head>
