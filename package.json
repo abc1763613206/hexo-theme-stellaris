@@ -1,6 +1,6 @@
 {
   "name": "hexo-theme-stellaris",
-  "version": "2.3.1",
+  "version": "2.3.3",
   "description": "Powerful, elegant and modern Hexo theme, forked from hexo-theme-stellar.",
   "main": "package.json",
   "scripts": {},
@@ -23,8 +23,8 @@
   "dependencies": {
     "hexo-renderer-jsx": "^2.0.0",
     "hexo-renderer-stylus": "^3.0.0",
-    "html-react-parser": "^5.2.0",
-    "node-fetch": "^2.7.0",
+    "html-react-parser": "^5.2.2",
+   "node-fetch": "^2.7.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
