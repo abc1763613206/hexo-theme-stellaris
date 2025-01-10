@@ -59,7 +59,7 @@ const LayoutPosts = (props) => {
               '-date'
           )
         pinned.forEach((post) => {
-          post_cards.push(<LayoutPostCard post={post} key={} {...props} />)
+          post_cards.push(<LayoutPostCard post={post} {...props} />)
         })
       }
       // Normal posts
