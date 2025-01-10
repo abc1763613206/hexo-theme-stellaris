@@ -21,12 +21,12 @@
     "url": "https://github.com/chiyuki0325/hexo-theme-stellaris/issues/"
   },
   "dependencies": {
-    "hexo-renderer-jsx": "^1.0.1",
+    "hexo-renderer-jsx": "^2.0.0",
     "hexo-renderer-stylus": "^3.0.0",
-    "html-react-parser": "^5.0.6",
+    "html-react-parser": "^5.2.0",
     "node-fetch": "^2.7.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "homepage": "https://blog.chyk.ink/wiki/stellaris/",
   "devDependencies": {
