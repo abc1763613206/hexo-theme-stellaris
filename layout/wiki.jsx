@@ -4,6 +4,7 @@ const Breadcrumb = require('./components/main/navbar/breadcrumb.jsx')
 const ArticleFooter = require('./components/main/article/article_footer.jsx')
 const ReadNext = require('./components/main/article/read_next.jsx')
 const Comments = require('./components/plugins/comments/layout.jsx')
+const AdsContainer = require('./components/plugins/ads.jsx')
 const WikiTitle = (props) => {
   const { page } = props
   const title = page.h1 ?? page.title
@@ -18,7 +19,7 @@ const WikiTitle = (props) => {
   }
 }
 const Wiki = (props) => {
-  const { scroll_reveal, partial, __ } = props
+  const { scroll_reveal, partial, theme, __ } = props
   let { page } = props
   if (page.menu_id === undefined) {
     page.menu_id = 'wiki'
@@ -51,6 +52,7 @@ const Wiki = (props) => {
           <ArticleFooter {...props} />
         </article>
         <ReadNext {...props} />
+        {theme.ads.section.includes('wiki') && <AdsContainer {...props}/>}
         <Comments {...props} />
       </Fragment>
     )

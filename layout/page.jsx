@@ -2,6 +2,7 @@ const Breadcrumb = require('./components/main/navbar/breadcrumb.jsx')
 const NavBarListPost = require('./components/main/navbar/list_post.jsx')
 const ArticleFooter = require('./components/main/article/article_footer.jsx')
 const Comments = require('./components/plugins/comments/layout.jsx')
+const AdsContainer = require('./components/plugins/ads.jsx')
 const PageTitle = (props) => {
   const { page } = props
   const title = page.h1 ?? page.title
@@ -16,7 +17,7 @@ const PageTitle = (props) => {
   }
 }
 const Page = (props) => {
-  const { scroll_reveal, partial } = props
+  const { scroll_reveal, partial, theme } = props
   let { page } = props
   if (page.menu_id === undefined) {
     page.menu_id = 'post'
@@ -44,6 +45,9 @@ const Page = (props) => {
       )}
       <ArticleFooter {...props} />
     </article>
+  )
+  elements.push(
+    theme.ads.section.includes('page') && <AdsContainer {...props} key="ads_container"/>
   )
   elements.push(<Comments {...props} key="comments"/>)
   return elements

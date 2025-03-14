@@ -578,3 +578,11 @@ inject:
   # 由于 Stylus 的特性，暂不支持 inject CSS
   # 如果要使用自定义 CSS，请在 _source/css 下创建 css 文件
   # 之后使用上文的 head 来引入
+
+ads: # 是否在文章末尾评论区前展示广告位
+  section: []
+  title: true # 是否显示标题
+  # section: ['post'] # post, wiki, page 
+  # html: '' # 你从广告联盟处获取的 HTML
+  # description: '' # 在广告位右下角显示的描述，使用 Markdown 渲染
+  

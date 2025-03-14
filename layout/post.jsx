@@ -4,6 +4,7 @@ const ArticleFooter = require('./components/main/article/article_footer.jsx')
 const ReadNext = require('./components/main/article/read_next.jsx')
 const RelatedPosts = require('./components/main/article/related_posts.jsx')
 const Comments = require('./components/plugins/comments/layout.jsx')
+const AdsContainer = require('./components/plugins/ads.jsx')
 const PostTitle = (props) => {
   const { page } = props
   const title = page.h1 ?? page.title
@@ -18,7 +19,7 @@ const PostTitle = (props) => {
   }
 }
 const Post = (props) => {
-  const { scroll_reveal, partial } = props
+  const { scroll_reveal, partial, theme } = props
   let { page } = props
   if (page.menu_id === undefined) {
     page.menu_id = 'post'
@@ -39,6 +40,7 @@ const Post = (props) => {
       </article>
       <ReadNext {...props} />
       <RelatedPosts {...props} />
+      {theme.ads.section.includes('post') && <AdsContainer {...props}/>}
       <Comments {...props} />
     </Fragment>
   )
