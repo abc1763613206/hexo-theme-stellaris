@@ -167,7 +167,6 @@ const ImportJS = (props) => {
     <script
       src={stellarJsUrl}
       type='text/javascript'
-      async={true}
       data-no-instant='true'
     />
   )
