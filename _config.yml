@@ -289,18 +289,19 @@ tag_plugins:
 
   # {% emoji %}
   emoji:
-    default: https://fastly.jsdelivr.net/gh/cdn-x/emoji/qq/%s.gif
-    twemoji: https://fastly.jsdelivr.net/gh/twitter/twemoji/assets/svg/%s.svg
-    qq: https://fastly.jsdelivr.net/gh/cdn-x/emoji/qq/%s.gif
-    aru: https://fastly.jsdelivr.net/gh/cdn-x/emoji/aru-l/%s.gif
-    tieba: https://fastly.jsdelivr.net/gh/cdn-x/emoji/tieba/%s.png
-
+    default: https://gcore.jsdelivr.net/gh/cdn-x/emoticons@3.1/qq/%s.gif
+    twemoji: https://gcore.jsdelivr.net/gh/cdn-x/emoticons@3.1/twemoji/assets/svg/%s.svg
+    qq: https://gcore.jsdelivr.net/gh/cdn-x/emoticons@3.1/qq/%s.gif
+    aru: https://gcore.jsdelivr.net/gh/cdn-x/emoticons@3.1/aru/%s.gif
+    tieba: https://gcore.jsdelivr.net/gh/cdn-x/emoticons@3.1/tieba/%s.png
+    blobcat: https://gcore.jsdelivr.net/gh/cdn-x/emoticons@3.1/blobcat/%s.gif
   # 可选迁移回本地源，示例如下
   # emoji:
   #   default: /thirdparty/emoji/qq/%s.gif
   #   twemoji: https://registry.npmmirror.com/twemoji/11.3.0/files/2/svg/%s.svg
   #   qq: /thirdparty/emoji/qq/%s.gif
   #   tieba: /thirdparty/emoji/tieba/%s.png
+  #   
   # {% image %}
   image:
     fancybox: false # true, false
