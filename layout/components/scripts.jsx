@@ -189,7 +189,7 @@ const InjectScripts = (props) => {
 const ImportDarkModeListener = (props) => {
   const { theme, __ } = props
   const DarkModeListener = `
-    const applyTheme = (theme) => {
+    window.applyTheme = (theme) => {
       document.documentElement.setAttribute('data-theme', theme);
       window.localStorage.setItem('Stellaris.theme', theme);
       const messages = {
@@ -199,10 +199,10 @@ const ImportDarkModeListener = (props) => {
       }
       hud?.toast?.(messages[theme]);
     }
-    const switchTheme = () => {
+    window.switchTheme = () => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       let nextTheme = themeModeList[(themeModeList.indexOf(currentTheme) + 1) % themeModeList.length];
-      applyTheme(nextTheme);
+      window.applyTheme(nextTheme);
     }
     var OSTheme = window.matchMedia('(prefers-color-scheme: dark)');
     OSTheme.addEventListener('change', e => {
