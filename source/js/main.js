@@ -241,7 +241,6 @@ const stellaris = {
   },
   loadAllPlugins: () => {
     ;[
-      'scrollReveal',
       'lazyLoad',
       'fancyBox',
       'swiper',
@@ -477,6 +476,7 @@ const stellaris = {
 
         const { distance, duration, interval, scale } =
           stellar.plugins.scrollreveal
+        document.documentElement.classList.add('sr-loaded')
         setTimeout(() => {
           sr.reveal(selector, {
             distance,
@@ -567,3 +567,6 @@ const stellaris = {
 window.addEventListener('load', stellaris.loadAllPlugins, false)
 window.addEventListener('load', stellaris.initOnFirstLoad, false)
 InstantClick.on('change', stellaris.initOnPageChange)
+document.addEventListener('DOMContentLoaded', () => {
+  stellaris.load.scrollReveal()
+})

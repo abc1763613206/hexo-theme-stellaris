@@ -1,2 +1,11 @@
+@keyframes reveal-fallback
+  to
+    visibility: visible
+    opacity: 1
+
 .reveal
   visibility: hidden
+  animation: reveal-fallback 0.1s 4s forwards
+
+html.sr-loaded .reveal
+  animation: none
