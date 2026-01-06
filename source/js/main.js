@@ -119,8 +119,16 @@
         })
       )
     },
+    safeCall: (label, fn) => {
+      try {
+        return fn()
+      } catch (e) {
+        console.warn(`[stellaris] ${label} failed`, e)
+      }
+    },
     pluginsConfig: {
       fancyBoxSelector: '',
+      scrollRevealPromise: null,
     },
     jQuery(fn) {
       const { status } = stellaris.jQueryState
@@ -160,24 +168,37 @@
             stellar
               .loadScript(stellar.plugins.swiper.js, { defer: true })
               .then(stellaris.init.swiper)
+              .catch((e) => {
+                console.warn('[stellaris] Swiper failed to load', e)
+              })
           }
         }
       },
       scrollReveal: () => {
         if (stellar.plugins.scrollreveal) {
-          stellar
+          if (stellaris.pluginsConfig.scrollRevealPromise) {
+            return stellaris.pluginsConfig.scrollRevealPromise
+          }
+          stellaris.pluginsConfig.scrollRevealPromise = stellar
             .loadScript(stellar.plugins.scrollreveal.js)
             .then(stellaris.init.scrollReveal)
-            .catch(() => {
+            .catch((e) => {
               // ScrollReveal 加载失败时，强制显示所有元素
-              console.warn('ScrollReveal failed to load, forcing reveal')
+              console.warn('ScrollReveal failed to load, forcing reveal', e)
+              // 取消 sr-loaded，保留 CSS fallback 动画兜底
+              document.documentElement.classList.remove('sr-loaded')
               stellaris.forceRevealAll()
             })
+          return stellaris.pluginsConfig.scrollRevealPromise
         }
       },
       lazyLoad: () => {
         if (stellar.plugins.lazyload) {
-          stellar.loadScript(stellar.plugins.lazyload.js, { defer: true })
+          stellar
+            .loadScript(stellar.plugins.lazyload.js, { defer: true })
+            .catch((e) => {
+              console.warn('[stellaris] LazyLoad failed to load', e)
+            })
           // https://www.npmjs.com/package/vanilla-lazyload
           // Set the options globally
           // to make LazyLoad self-initialize
@@ -207,6 +228,9 @@
           stellar
             .loadScript(stellar.plugins.fancybox.js, { defer: true })
             .then(stellaris.init.fancyBox)
+            .catch((e) => {
+              console.warn('[stellaris] FancyBox failed to load', e)
+            })
         }
       },
       search: () => {
@@ -214,11 +238,18 @@
           stellar
             .loadScript(stellar.search.js, { defer: true })
             .then(stellaris.init.search)
+            .catch((e) => {
+              console.warn('[stellaris] Search failed to load', e)
+            })
         }
       },
       copyCode: () => {
         if (stellar.plugins.copycode) {
-          stellar.loadScript(stellar.plugins.copycode.js, { defer: true })
+          stellar
+            .loadScript(stellar.plugins.copycode.js, { defer: true })
+            .catch((e) => {
+              console.warn('[stellaris] CopyCode failed to load', e)
+            })
         }
       },
       themePlugins: () => {
@@ -229,7 +260,7 @@
             if (els != undefined && els.length > 0) {
               if (plugin.ext) {
                 for (let extjs of Object.values(plugin.ext)) {
-                  stellar.loadScript(extjs, { defer: true })
+                  stellar.loadScript(extjs, { defer: true }).catch(() => {})
                 }
               }
               if (plugin.css) {
@@ -238,7 +269,7 @@
                 }
               }
               if (plugin.js) {
-                stellar.loadScript(plugin.js, { defer: true })
+                stellar.loadScript(plugin.js, { defer: true }).catch(() => {})
               }
             }
           }
@@ -336,11 +367,10 @@
               const top = $(targetEl).offset().top - 32 // 32px offset
               $('html, body').animate({ scrollTop: top }, 300)
             }
-            // 点击 TOC 后强制显示所有元素，防止白屏
-            // 点击 TOC 后立即强制显示所有元素，并在动画结束后再次确保显示
-            stellaris.forceRevealAll()
+            // 触发一次 scroll，让 ScrollReveal 能在跳转后及时计算并 reveal。
+            // 不要 forceRevealAll，否则会导致动画直接“瞬间完成/全量提前显示”。
             setTimeout(() => {
-              stellaris.forceRevealAll()
+              window.dispatchEvent(new Event('scroll'))
             }, 350)
           })
         })
@@ -470,6 +500,8 @@
       },
       swiper: () => {
         if (stellar.plugins.swiper && 'Swiper' in window) {
+          const swiper_api = document.getElementById('swiper-api')
+          if (!swiper_api) return
           const effect = swiper_api.getAttribute('effect') || ''
           window.swiper = new Swiper('.swiper#swiper-api', {
             slidesPerView: 'auto',
@@ -489,20 +521,48 @@
         }
       },
       scrollReveal: () => {
-        if (stellar.plugins.scrollreveal && 'ScrollReveal' in window) {
-          const selector = 'body .reveal',
-            sr = window.ScrollReveal()
-          sr.destroy()
-          document.querySelectorAll(selector).forEach((e) => {
-            ;['opacity', 'transform'].forEach((cls) => {
-              e.style[cls] = null
-            })
-          })
+        if (!stellar.plugins.scrollreveal) return
+        // InstantClick 可能在 window load 之前触发 change，此时库还没加载。
+        if (!('ScrollReveal' in window)) {
+          stellaris.load.scrollReveal()
+          return
+        }
 
-          const { distance, duration, interval, scale } =
-            stellar.plugins.scrollreveal
-          document.documentElement.classList.add('sr-loaded')
-          setTimeout(() => {
+        const selector = 'body .reveal'
+        const elements = document.querySelectorAll(selector)
+        if (elements.length === 0) return
+
+        let sr
+        try {
+          sr = stellaris.pluginsConfig._scrollRevealInstance || window.ScrollReveal()
+          stellaris.pluginsConfig._scrollRevealInstance = sr
+          if (typeof sr.destroy === 'function') sr.destroy()
+        } catch (e) {
+          console.warn('ScrollReveal init failed, forcing reveal', e)
+          document.documentElement.classList.remove('sr-loaded')
+          stellaris.forceRevealAll()
+          return
+        }
+
+        // 清理可能残留的内联样式，避免切页后一直处于 hidden/transform 状态
+        elements.forEach((el) => {
+          ;[
+            'opacity',
+            'transform',
+            'visibility',
+            'transition',
+            'webkitTransition',
+          ].forEach((prop) => {
+            el.style[prop] = null
+          })
+        })
+
+        const { distance, duration, interval, scale } = stellar.plugins.scrollreveal
+
+        const revealNow = () => {
+          try {
+            // 仅在真正开始 reveal 之前再禁用 CSS fallback，避免“永远 hidden”
+            document.documentElement.classList.add('sr-loaded')
             sr.reveal(selector, {
               distance,
               duration,
@@ -510,11 +570,24 @@
               scale,
               easing: 'ease-out',
               afterReveal: (el) => {
+                el.style.visibility = 'visible'
                 el.style.opacity = '1'
                 el.style.transform = 'none'
-              }
+              },
             })
-          }, 50)
+            // 温和兜底：仅修复仍被 visibility:hidden 卡住的元素，避免覆盖 SR 的动画效果
+            setTimeout(forceRevealVisibleElements, 800)
+          } catch (e) {
+            console.warn('ScrollReveal reveal failed, forcing reveal', e)
+            document.documentElement.classList.remove('sr-loaded')
+            stellaris.forceRevealAll()
+          }
+        }
+
+        if ('requestAnimationFrame' in window) {
+          requestAnimationFrame(() => requestAnimationFrame(revealNow))
+        } else {
+          setTimeout(revealNow, 0)
         }
       },
       lazyLoad: () => {
@@ -563,7 +636,7 @@
         'registerTabsTag',
         'outdatedCheck',
       ].forEach((component) => {
-        stellaris.init[component]()
+        stellaris.safeCall(`init.${component}`, () => stellaris.init[component]())
       })
     },
     initPlugins: () => {
@@ -575,23 +648,23 @@
         'search',
         'themePlugins',
       ].forEach((plugin) => {
-        stellaris.init[plugin]()
+        stellaris.safeCall(`init.${plugin}`, () => stellaris.init[plugin]())
       })
     },
     initOnFirstLoad: () => {
       console.log(`New page loaded: ${window.location.pathname}`)
-      stellaris.loadNeededPlugins()
-      stellaris.initPageComponents()
+      stellaris.safeCall('loadNeededPlugins', stellaris.loadNeededPlugins)
+      stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
     },
     initOnPageChange: () => {
       console.log(`Page loaded: ${window.location.pathname}`)
-      stellaris.loadNeededCSS()
-      stellaris.loadNeededPlugins()
-      stellaris.load.themePlugins()
-      stellaris.initPageComponents()
-      stellaris.initPlugins()
+      stellaris.safeCall('loadNeededCSS', stellaris.loadNeededCSS)
+      stellaris.safeCall('loadNeededPlugins', stellaris.loadNeededPlugins)
+      stellaris.safeCall('load.themePlugins', stellaris.load.themePlugins)
+      stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
+      stellaris.safeCall('initPlugins', stellaris.initPlugins)
       // 页面切换后重新启用滚动保护
-      setupScrollProtection()
+      stellaris.safeCall('setupScrollProtection', setupScrollProtection)
     },
     // 强制显示所有元素（兜底方法）
     forceRevealAll: () => {
@@ -605,22 +678,35 @@
   }
   window.stellaris = stellaris;
 
+  const isScrollRevealManaged = (el) => {
+    // ScrollReveal v4 会给元素打 data-sr-id；有它就不要手动改写显示状态
+    return el && el.hasAttribute && el.hasAttribute('data-sr-id')
+  }
+
   // 滚动保护逻辑：确保快速滚动或点击 TOC 时元素能正常显示
   const forceRevealVisibleElements = () => {
     const viewportHeight = window.innerHeight
     document.querySelectorAll('body .reveal').forEach((el) => {
       const rect = el.getBoundingClientRect()
       if (rect.top < viewportHeight + 200 && rect.bottom > -100) {
-        el.style.visibility = 'visible'
-        el.style.opacity = '1'
-        el.style.transform = 'none'
-        el.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out'
+        // ScrollReveal 正常工作时不要干预它管理的元素，否则会导致动画“瞬间完成/抢跑”。
+        const srReady = 'ScrollReveal' in window
+        if (srReady && isScrollRevealManaged(el)) return
+
+        // 只在元素依然被 visibility:hidden 卡住时修复；不动 opacity/transform。
+        const computed = window.getComputedStyle(el)
+        if (computed.visibility === 'hidden') el.style.visibility = 'visible'
       }
     })
   }
   
   let scrollProtectionHandler = null
   let scrollProtectionTimeout = null
+
+  const isScrollRevealConfigured = () => {
+    // 主题只在启用时注入 stellar.plugins.scrollreveal
+    return !!stellar.plugins?.scrollreveal
+  }
   
   const setupScrollProtection = () => {
     // 移除之前的监听器（如果存在）
@@ -628,16 +714,20 @@
       window.removeEventListener('scroll', scrollProtectionHandler)
     }
     clearTimeout(scrollProtectionTimeout)
-    
+
+    // 若启用了 ScrollReveal，让它接管动画；滚动保护会导致元素提前变为 visible，从而动画“过快/跳过”。
+    // 仅在 SR 未启用或库没加载（可能被拦截）时，短暂启用滚动保护避免白屏。
+    if (isScrollRevealConfigured() && 'ScrollReveal' in window) {
+      return
+    }
+
     scrollProtectionHandler = () => {
       clearTimeout(scrollProtectionTimeout)
       scrollProtectionTimeout = setTimeout(forceRevealVisibleElements, 50)
     }
-    
-    // 启用滚动监听
+
     window.addEventListener('scroll', scrollProtectionHandler, { passive: true })
-    
-    // 3秒后移除滚动监听
+
     setTimeout(() => {
       if (scrollProtectionHandler) {
         window.removeEventListener('scroll', scrollProtectionHandler)
@@ -656,10 +746,25 @@
   
   // 最终兜底：10秒后无论如何都强制显示所有 reveal 元素，防止任何模块阻塞导致白屏
   setTimeout(() => {
+    // 如果 ScrollReveal 正常加载，就不要全量 forceRevealAll（会抹掉后续滚动动画）。
+    // 仅在 SR 没加载/没启用时才使用全量兜底。
+    const srEnabled = !!stellar.plugins?.scrollreveal
+    const srReady = 'ScrollReveal' in window
+    if (srEnabled && srReady) return
     stellaris.forceRevealAll()
   }, 10000)
 
-  window.addEventListener('load', stellaris.loadAllPlugins, false)
-  window.addEventListener('load', stellaris.initOnFirstLoad, false)
+  // 不依赖 window.load：某些注入脚本/统计脚本被拦截时可能延迟甚至阻断 load 事件。
+  // 这里尽早初始化一次，load 事件仅作为补偿兜底。
+  let booted = false
+  const bootOnce = () => {
+    if (booted) return
+    booted = true
+    stellaris.safeCall('loadAllPlugins', stellaris.loadAllPlugins)
+    stellaris.safeCall('initOnFirstLoad', stellaris.initOnFirstLoad)
+  }
+  // main.js 一般在页面底部引入，此时 DOM 已可用；直接启动可避免被后续脚本阻塞。
+  bootOnce()
+  window.addEventListener('load', bootOnce, { once: true })
   InstantClick.on('change', stellaris.initOnPageChange)
 })()
