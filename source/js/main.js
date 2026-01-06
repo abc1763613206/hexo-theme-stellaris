@@ -5,7 +5,7 @@
   }
 
   console.log(
-    `\n %c Hexo theme Stellaris %c ${stellar.github} %c \n \n`,
+    `\n %c Hexo theme Stellaris %c ${stellar.github || ''} %c \n \n`,
     'color: #eff4f9; background: #030307; padding: 5px; border-radius: 4px 0 0 4px;',
     'background: #eff4f9; padding: 5px; border-radius: 0 4px 4px 0;',
     ''
@@ -53,14 +53,17 @@
     copy: (id, msg) => {
       const el = document.getElementById(id)
       if (el) {
-        el.select()
+        if (typeof el.select === 'function') {
+          el.select()
+        }
+        const value = 'value' in el ? el.value : el.textContent || ''
         if (!navigator.clipboard) {
           document.execCommand('Copy')
           if (msg && msg.length > 0) {
             hud.toast(msg)
           }
         } else {
-          navigator.clipboard.writeText(el.value).then(() => {
+          navigator.clipboard.writeText(value).then(() => {
             if (msg && msg.length > 0) {
               hud.toast(msg)
             }
@@ -83,7 +86,7 @@
       duration = isNaN(duration) ? 2000 : duration
       var el = document.createElement('div')
       el.classList.add('toast')
-      el.innerHTML = msg
+      el.textContent = msg == null ? '' : String(msg)
       document.body.appendChild(el)
       setTimeout(function () {
         var d = 0.5
@@ -303,23 +306,28 @@
       toc: () => {
         stellaris.jQuery(() => {
           const scrollOffset = 32
-          var segs = []
-          $('article.md-text :header').each(function (idx, node) {
-            segs.push(node)
-          })
-          // 滚动
-          $(document, window).scroll(function (e) {
-            var scrollTop = $(this).scrollTop()
+          const buildSegs = () => $('article.md-text :header').toArray()
+          let segs = buildSegs()
+          // 避免 InstantClick 切页后重复绑定
+          $(window)
+            .off('scroll.stellaris.toc')
+            .on('scroll.stellaris.toc', function () {
+              var scrollTop = $(this).scrollTop()
             var topSeg = null
-            for (var idx in segs) {
-              var seg = $(segs[idx])
-              if (seg.offset().top > scrollTop + scrollOffset) {
+            for (let i = 0; i < segs.length; i++) {
+              var seg = $(segs[i])
+              const segOffset = seg.offset && seg.offset()
+              if (!segOffset) continue
+              if (segOffset.top > scrollTop + scrollOffset) {
                 continue
               }
               if (!topSeg) {
                 topSeg = seg
-              } else if (seg.offset().top >= topSeg.offset().top) {
+              } else {
+                const topOffset = topSeg.offset && topSeg.offset()
+                if (topOffset && segOffset.top >= topOffset.top) {
                 topSeg = seg
+                }
               }
             }
             if (topSeg) {
@@ -334,6 +342,7 @@
                   highlightItem.addClass('active')
                   const e0 = document.querySelector('.widgets')
                   const e1 = document.querySelector(highlightSelector)
+                  if (!e0 || !e1) return
                   const offsetBottom =
                     e1.getBoundingClientRect().bottom -
                     e0.getBoundingClientRect().bottom +
@@ -352,27 +361,34 @@
                 $('.toc#toc a.toc-link:first').addClass('active')
               }
             }
-          })
+            })
+
+          // 初次执行一次，且在切页后重建 segs
+          segs = buildSegs()
+          $(window).triggerHandler('scroll.stellaris.toc')
         })
       },
       sidebar: () => {
         stellaris.jQuery(() => {
-          $('.toc#toc a.toc-link').click(function (e) {
-            e.preventDefault()
-            const l_body = document.querySelector('.l_body')
-            l_body.classList.remove('sidebar')
-            const targetId = decodeURI($(this).attr('href'))
-            const targetEl = document.querySelector(targetId)
-            if (targetEl) {
-              const top = $(targetEl).offset().top - 32 // 32px offset
-              $('html, body').animate({ scrollTop: top }, 300)
-            }
-            // 触发一次 scroll，让 ScrollReveal 能在跳转后及时计算并 reveal。
-            // 不要 forceRevealAll，否则会导致动画直接“瞬间完成/全量提前显示”。
-            setTimeout(() => {
-              window.dispatchEvent(new Event('scroll'))
-            }, 350)
-          })
+          // 委托绑定，避免 InstantClick 切页后重复绑定
+          $(document)
+            .off('click.stellaris.tocjump', '.toc#toc a.toc-link')
+            .on('click.stellaris.tocjump', '.toc#toc a.toc-link', function (e) {
+              e.preventDefault()
+              const l_body = document.querySelector('.l_body')
+              if (l_body) l_body.classList.remove('sidebar')
+              const targetId = decodeURI($(this).attr('href'))
+              const targetEl = document.querySelector(targetId)
+              if (targetEl) {
+                const top = $(targetEl).offset().top - 32 // 32px offset
+                $('html, body').animate({ scrollTop: top }, 300)
+              }
+              // 触发一次 scroll，让 ScrollReveal 能在跳转后及时计算并 reveal。
+              // 不要 forceRevealAll，否则会导致动画直接“瞬间完成/全量提前显示”。
+              setTimeout(() => {
+                window.dispatchEvent(new Event('scroll'))
+              }, 350)
+            })
         })
       },
       clickEvents: () => {
@@ -399,31 +415,43 @@
        * Tabs tag listener (without twitter bootstrap).
        */
       registerTabsTag: function () {
-        // Binding `nav-tabs` & `tab-content` by real time permalink changing.
-        document.querySelectorAll('.tabs .nav-tabs .tab').forEach((element) => {
-          element.addEventListener('click', (event) => {
+        // 使用事件委托避免重复绑定，并确保 InstantClick 切页后的新增 tab 也可用。
+        if (!stellaris.pluginsConfig._tabsDelegated) {
+          stellaris.pluginsConfig._tabsDelegated = true
+          document.addEventListener('click', (event) => {
+            const rawTarget = event.target
+            const target = rawTarget instanceof Element ? rawTarget : null
+            if (!target) return
+
+            const element = target.closest('.tabs .nav-tabs .tab')
+            if (!element) return
+
             event.preventDefault()
-            // Prevent selected tab to select again.
             if (element.classList.contains('active')) return
-            // Add & Remove active class on `nav-tabs` & `tab-content`.
-            ;[...element.parentNode.children].forEach((target) => {
-              target.classList.toggle('active', target === element)
+
+            const nav = element.parentNode
+            if (!nav) return
+            ;[...nav.children].forEach((t) => {
+              t.classList.toggle('active', t === element)
             })
-            // https://stackoverflow.com/questions/20306204/using-queryselector-with-ids-that-are-numbers
-            const tActive = document.getElementById(
-              element.querySelector('a').getAttribute('href').replace('#', '')
-            )
-            ;[...tActive.parentNode.children].forEach((target) => {
-              target.classList.toggle('active', target === tActive)
+
+            const a = element.querySelector('a')
+            if (!a) return
+            const href = a.getAttribute('href')
+            if (!href) return
+            const id = href.replace('#', '')
+            const tActive = document.getElementById(id)
+            if (!tActive || !tActive.parentNode) return
+            ;[...tActive.parentNode.children].forEach((t) => {
+              t.classList.toggle('active', t === tActive)
             })
-            // Trigger event
             tActive.dispatchEvent(
               new Event('tabs:click', {
                 bubbles: true,
               })
             )
           })
-        })
+        }
 
         window.dispatchEvent(new Event('tabs:register'))
       },
@@ -444,9 +472,10 @@
           }
         }
 
-        const postMetaTimes = document
-          .getElementById('post-meta')
-          .getElementsByTagName('time')
+        const postMeta = document.getElementById('post-meta')
+        if (!postMeta) return
+        const postMetaTimes = postMeta.getElementsByTagName('time')
+        if (!postMetaTimes || postMetaTimes.length === 0) return
         if (outdatedEl !== null) {
           if (
             judgeOutdated(
@@ -465,7 +494,9 @@
             if ($inputArea.length == 0) {
               return
             }
-            $inputArea.focus(function () {
+            // 避免 InstantClick 切页后重复绑定
+            $inputArea.off('.stellaris.search')
+            $inputArea.on('focus.stellaris.search', function () {
               let path
               if (stellar.search.service in stellar.search) {
                 path = stellar.search[stellar.search.service].path
@@ -478,21 +509,29 @@
               const filter = $inputArea.attr('data-filter') || ''
               searchFunc(path, filter, 'search-input', 'search-result')
             })
-            $inputArea.keydown(function (e) {
+            $inputArea.on('keydown.stellaris.search', function (e) {
               if (e.which == 13) {
                 e.preventDefault()
               }
             })
 
-            new MutationObserver(function (mutationsList, observer) {
-              if (mutationsList.length == 1) {
-                if (mutationsList[0].addedNodes.length) {
-                  $('.search-wrapper').removeClass('noresult')
-                } else if (mutationsList[0].removedNodes.length) {
-                  $('.search-wrapper').addClass('noresult')
+            const resultEl = document.querySelector('div#search-result')
+            if (!resultEl) return
+            if (stellaris.pluginsConfig._searchObserver) {
+              stellaris.pluginsConfig._searchObserver.disconnect()
+            }
+            stellaris.pluginsConfig._searchObserver = new MutationObserver(
+              function (mutationsList) {
+                if (mutationsList.length == 1) {
+                  if (mutationsList[0].addedNodes.length) {
+                    $('.search-wrapper').removeClass('noresult')
+                  } else if (mutationsList[0].removedNodes.length) {
+                    $('.search-wrapper').addClass('noresult')
+                  }
                 }
               }
-            }).observe(document.querySelector('div#search-result'), {
+            )
+            stellaris.pluginsConfig._searchObserver.observe(resultEl, {
               childList: true,
             })
           })
@@ -705,7 +744,7 @@
 
   const isScrollRevealConfigured = () => {
     // 主题只在启用时注入 stellar.plugins.scrollreveal
-    return !!stellar.plugins?.scrollreveal
+    return !!(stellar.plugins && stellar.plugins.scrollreveal)
   }
   
   const setupScrollProtection = () => {
@@ -766,5 +805,7 @@
   // main.js 一般在页面底部引入，此时 DOM 已可用；直接启动可避免被后续脚本阻塞。
   bootOnce()
   window.addEventListener('load', bootOnce, { once: true })
-  InstantClick.on('change', stellaris.initOnPageChange)
+  if (window.InstantClick && typeof window.InstantClick.on === 'function') {
+    window.InstantClick.on('change', stellaris.initOnPageChange)
+  }
 })()
