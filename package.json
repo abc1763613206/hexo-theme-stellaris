@@ -24,7 +24,8 @@
     "hexo-renderer-jsx": "^2.0.0",
     "hexo-renderer-stylus": "^3.0.0",
     "html-react-parser": "^5.2.2",
-   "node-fetch": "^2.7.0",
+    "node-fetch": "^2.7.0",
+    "image-size": "^2.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

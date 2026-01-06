@@ -43,7 +43,7 @@ hexo-theme-stellaris 分叉自 [hexo-theme-stellar](https://github.com/xaoxuu/he
 
 - 安装依赖
   ```bash
-  npm install react react-dom hexo-renderer-jsx html-react-parser --save
+  npm install react react-dom hexo-renderer-jsx html-react-parser image-size --save
   ```
 
 - 将主题安装为子模块
