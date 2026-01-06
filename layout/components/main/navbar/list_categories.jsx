@@ -41,7 +41,8 @@ const ListCategories = (props) => {
     let result = []
 
     prepareQuery(parent).forEach((cat, i) => {
-      if (i || level) result.push(separator)
+      if (i || level)
+        result.push(<span className='sep' key={'sep-' + cat._id}></span>)
       result.push(
         <a
           className={`${className}-link`}
