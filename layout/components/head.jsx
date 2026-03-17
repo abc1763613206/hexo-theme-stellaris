@@ -155,6 +155,66 @@ const ImportDarkMode = (props) => {
   }
 }
 
+const ImportHistoryRevealPreset = () => {
+  const HistoryRevealPreset = `
+    (function () {
+      var historyHintKey = '__stellaris_history_navigation__';
+      var applyHistoryHint = function () {
+        window.__stellarisHistoryNavigation = true;
+        document.documentElement.classList.add('sr-bypass', 'sr-loaded');
+      };
+      window.addEventListener('popstate', function () {
+        try {
+          if (window.sessionStorage) {
+            window.sessionStorage.removeItem(historyHintKey);
+          }
+        } catch (e) {}
+        applyHistoryHint();
+      }, true);
+      try {
+        var historyHint = false;
+        try {
+          if (window.sessionStorage && window.sessionStorage.getItem(historyHintKey) === '1') {
+            historyHint = true;
+            window.sessionStorage.removeItem(historyHintKey);
+          }
+        } catch (e) {}
+        var entries =
+          typeof performance !== 'undefined' &&
+          typeof performance.getEntriesByType === 'function'
+            ? performance.getEntriesByType('navigation')
+            : [];
+        var type = entries && entries.length > 0 ? entries[0].type : '';
+        if (!type && performance && performance.navigation) {
+          switch (performance.navigation.type) {
+            case 1:
+              type = 'reload';
+              break;
+            case 2:
+              type = 'back_forward';
+              break;
+            default:
+              type = 'navigate';
+          }
+        }
+        if (type === 'back_forward') {
+          historyHint = true;
+        }
+        if (historyHint) {
+          applyHistoryHint();
+        }
+      } catch (e) {}
+    })();
+  `
+  return (
+    <script
+      type='text/javascript'
+      data-no-instant='true'
+      dangerouslySetInnerHTML={{ __html: HistoryRevealPreset }}
+    />
+  )
+}
+
 const ImportCSS = (props) => {
   const { theme, url_for } = props
   const { join } = require('path')
@@ -282,6 +342,7 @@ module.exports = function Head(props) {
       <FavIcon {...props} />
 
       <ImportDarkMode {...props} />
+      <ImportHistoryRevealPreset />
       <ImportCSS {...props} />
       <ImportHighlightJSTheme {...props} />
       <InjectHead {...props} />

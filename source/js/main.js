@@ -132,6 +132,10 @@
     pluginsConfig: {
       fancyBoxSelector: '',
       scrollRevealPromise: null,
+      scrollRevealMode: 'animate',
+      lastPageKey: null,
+      pendingHistoryNavigation: false,
+      lazyLoadListenerBound: false,
     },
     jQuery(fn) {
       const { status } = stellaris.jQueryState
@@ -179,6 +183,10 @@
       },
       scrollReveal: () => {
         if (stellar.plugins.scrollreveal) {
+          if (stellaris.pluginsConfig.scrollRevealMode === 'bypass') {
+            enableImmediateRevealMode()
+            return Promise.resolve()
+          }
           if ('ScrollReveal' in window) {
             return Promise.resolve().then(() => stellaris.init.scrollReveal())
           }
@@ -197,8 +205,6 @@
               stellaris.pluginsConfig.scrollRevealPromise = null
               // ScrollReveal 加载失败时，强制显示所有元素
               console.warn('ScrollReveal failed to load, forcing reveal', e)
-              // 取消 sr-loaded，保留 CSS fallback 动画兜底
-              document.documentElement.classList.remove('sr-loaded')
               stellaris.forceRevealAll()
             })
           return stellaris.pluginsConfig.scrollRevealPromise
@@ -206,26 +212,32 @@
       },
       lazyLoad: () => {
         if (stellar.plugins.lazyload) {
-          stellar
-            .loadScript(stellar.plugins.lazyload.js, { defer: true })
-            .catch((e) => {
-              console.warn('[stellaris] LazyLoad failed to load', e)
-            })
           // https://www.npmjs.com/package/vanilla-lazyload
           // Set the options globally
           // to make LazyLoad self-initialize
           window.lazyLoadOptions = {
             elements_selector: '.lazy',
           }
-          // Listen to the initialization event
-          // and get the instance of LazyLoad
-          window.addEventListener(
-            'LazyLoad::Initialized',
-            (event) => {
-              window.lazyLoadInstance = event.detail.instance
-            },
-            false
-          )
+          if (!stellaris.pluginsConfig.lazyLoadListenerBound) {
+            stellaris.pluginsConfig.lazyLoadListenerBound = true
+            // Listen to the initialization event
+            // and get the instance of LazyLoad
+            window.addEventListener(
+              'LazyLoad::Initialized',
+              (event) => {
+                window.lazyLoadInstance = event.detail.instance
+                stellaris.safeCall('init.lazyLoad.refresh', () => stellaris.init.lazyLoad())
+              },
+              false
+            )
+          }
+          if (!('LazyLoad' in window) && !('lazyLoadInstance' in window)) {
+            stellar
+              .loadScript(stellar.plugins.lazyload.js, { defer: true })
+              .catch((e) => {
+                console.warn('[stellaris] LazyLoad failed to load', e)
+              })
+          }
           stellaris.init.lazyLoad()
         }
       },
@@ -293,7 +305,8 @@
         stellaris.loadCSS[css]()
       })
     },
-    loadAllPlugins: () => {
+    loadAllPlugins: (options = {}) => {
+      const skipPlugins = new Set(options.skip || [])
       ;[
         'scrollReveal',
         'lazyLoad',
@@ -303,11 +316,14 @@
         'copyCode',
         'themePlugins',
       ].forEach((plugin) => {
+        if (skipPlugins.has(plugin)) return
         stellaris.load[plugin]()
       })
     },
-    loadNeededPlugins: () => {
+    loadNeededPlugins: (options = {}) => {
+      const skipPlugins = new Set(options.skip || [])
       ;['lazyLoad', 'fancyBox', 'swiper'].forEach((plugin) => {
+        if (skipPlugins.has(plugin)) return
         stellaris.load[plugin]()
       })
     },
@@ -570,6 +586,10 @@
       },
       scrollReveal: () => {
         if (!stellar.plugins.scrollreveal) return
+        if (stellaris.pluginsConfig.scrollRevealMode === 'bypass') {
+          enableImmediateRevealMode()
+          return
+        }
         // InstantClick 可能在 window load 之前触发 change，此时库还没加载。
         if (!('ScrollReveal' in window)) {
           stellaris.load.scrollReveal()
@@ -579,6 +599,7 @@
         const selector = 'body .reveal'
         const elements = document.querySelectorAll(selector)
         if (elements.length === 0) {
+          disableImmediateRevealMode()
           document.documentElement.classList.remove('sr-loaded')
           return
         }
@@ -590,29 +611,19 @@
           if (typeof sr.destroy === 'function') sr.destroy()
         } catch (e) {
           console.warn('ScrollReveal init failed, forcing reveal', e)
-          document.documentElement.classList.remove('sr-loaded')
           stellaris.forceRevealAll()
           return
         }
 
         // 清理可能残留的内联样式，避免切页后一直处于 hidden/transform 状态
-        elements.forEach((el) => {
-          ;[
-            'opacity',
-            'transform',
-            'visibility',
-            'transition',
-            'webkitTransition',
-          ].forEach((prop) => {
-            el.style[prop] = null
-          })
-        })
+        elements.forEach(clearRevealInlineStyles)
 
         const { distance, duration, interval, scale } = stellar.plugins.scrollreveal
 
         const revealNow = () => {
           try {
             // 仅在真正开始 reveal 之前再禁用 CSS fallback，避免“永远 hidden”
+            disableImmediateRevealMode()
             document.documentElement.classList.add('sr-loaded')
             sr.reveal(selector, {
               distance,
@@ -630,7 +641,6 @@
             setTimeout(forceRevealVisibleElements, 800)
           } catch (e) {
             console.warn('ScrollReveal reveal failed, forcing reveal', e)
-            document.documentElement.classList.remove('sr-loaded')
             stellaris.forceRevealAll()
           }
         }
@@ -690,7 +700,8 @@
         stellaris.safeCall(`init.${component}`, () => stellaris.init[component]())
       })
     },
-    initPlugins: () => {
+    initPlugins: (options = {}) => {
+      const skipPlugins = new Set(options.skip || [])
       ;[
         'scrollReveal',
         'lazyLoad',
@@ -699,76 +710,268 @@
         'search',
         'themePlugins',
       ].forEach((plugin) => {
+        if (skipPlugins.has(plugin)) return
         stellaris.safeCall(`init.${plugin}`, () => stellaris.init[plugin]())
       })
     },
-    armScrollRevealFallback: () => {
-      if (stellar.plugins.scrollreveal) {
-        document.documentElement.classList.remove('sr-loaded')
-      }
-    },
-    initOnFirstLoad: () => {
-      console.log(`New page loaded: ${window.location.pathname}`)
-      stellaris.safeCall('armScrollRevealFallback', stellaris.armScrollRevealFallback)
-      stellaris.safeCall('loadNeededPlugins', stellaris.loadNeededPlugins)
-      stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
-    },
-    initOnPageChange: () => {
-      console.log(`Page loaded: ${window.location.pathname}`)
-      stellaris.safeCall('armScrollRevealFallback', stellaris.armScrollRevealFallback)
-      stellaris.safeCall('loadNeededCSS', stellaris.loadNeededCSS)
-      stellaris.safeCall('loadNeededPlugins', stellaris.loadNeededPlugins)
-      stellaris.safeCall('load.themePlugins', stellaris.load.themePlugins)
-      stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
-      stellaris.safeCall('initPlugins', stellaris.initPlugins)
-      // 页面切换后重新启用滚动保护
-      stellaris.safeCall('setupScrollProtection', setupScrollProtection)
-    },
+    armScrollRevealFallback: (mode) => prepareRevealForLifecycle(mode),
+    initOnFirstLoad: () => pageLifecycle.boot(),
+    initOnPageChange: () => pageLifecycle.onInstantChange(),
     // 强制显示所有元素（兜底方法）
     forceRevealAll: () => {
+      enableImmediateRevealMode()
       document.querySelectorAll('body .reveal').forEach((el) => {
-        el.style.visibility = 'visible'
-        el.style.opacity = '1'
-        el.style.transform = 'none'
-        el.style.transition = null
-        el.style.webkitTransition = null
+        revealElementImmediately(el)
       })
     },
   }
   window.stellaris = stellaris;
+
+  const normalizePagePath = (pathname = '/') => {
+    const normalizedPath = pathname.replace(/\/index\.html?$/i, '/')
+    if (normalizedPath === '/') return '/'
+    return normalizedPath.replace(/\/+$/, '') || '/'
+  }
+
+  const historyNavigationHintKey = '__stellaris_history_navigation__'
+
+  const getCurrentPageKey = () => {
+    return `${normalizePagePath(window.location.pathname)}${window.location.search || ''}`
+  }
+
+  const syncCurrentPageKey = () => {
+    const pageKey = getCurrentPageKey()
+    stellaris.pluginsConfig.lastPageKey = pageKey
+    return pageKey
+  }
+
+  const SCROLL_REVEAL_MODE = Object.freeze({
+    ANIMATE: 'animate',
+    BYPASS: 'bypass',
+  })
+  const scrollRevealBypassClass = 'sr-bypass'
+  const PAGE_LIFECYCLE = Object.freeze({
+    BOOT: 'boot',
+    NAVIGATE: 'navigate',
+    HISTORY: 'history',
+    BFCACHE: 'bfcache',
+    SAME_PAGE: 'same-page',
+  })
+
+  const getCurrentPageRouteLink = (event) => {
+    if (event.defaultPrevented) return false
+    if (event.button !== 0) return false
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return false
+    }
+
+    const rawTarget = event.target
+    const target =
+      rawTarget instanceof Element ? rawTarget.closest('a[href]') : null
+    if (!target) return false
+    if (target.target && target.target !== '_self') return false
+    if (target.hasAttribute('download')) return false
+
+    const href = target.getAttribute('href')
+    if (
+      !href ||
+      href.startsWith('#') ||
+      href.startsWith('javascript:') ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:')
+    ) {
+      return false
+    }
+
+    let targetUrl
+    try {
+      targetUrl = new URL(target.href, window.location.href)
+    } catch (e) {
+      return false
+    }
+
+    if (targetUrl.origin !== window.location.origin) return false
+    if (targetUrl.hash) return false
+
+    const targetPageKey = `${normalizePagePath(targetUrl.pathname)}${targetUrl.search || ''}`
+    return targetPageKey === getCurrentPageKey() ? target : null
+  }
+
+  const getNavigationType = () => {
+    const entries =
+      typeof performance !== 'undefined' &&
+      typeof performance.getEntriesByType === 'function'
+        ? performance.getEntriesByType('navigation')
+        : []
+    if (entries && entries.length > 0 && entries[0].type) {
+      return entries[0].type
+    }
+
+    if (
+      typeof performance !== 'undefined' &&
+      performance.navigation &&
+      typeof performance.navigation.type === 'number'
+    ) {
+      switch (performance.navigation.type) {
+        case 1:
+          return 'reload'
+        case 2:
+          return 'back_forward'
+        default:
+          return 'navigate'
+      }
+    }
+
+    return 'navigate'
+  }
+
+  const markHistoryNavigationHint = () => {
+    try {
+      window.sessionStorage.setItem(historyNavigationHintKey, '1')
+    } catch (e) {}
+    window.__stellarisHistoryNavigation = true
+  }
+
+  const clearHistoryNavigationHint = () => {
+    try {
+      window.sessionStorage.removeItem(historyNavigationHintKey)
+    } catch (e) {}
+    window.__stellarisHistoryNavigation = false
+  }
+
+  const consumeHistoryNavigationHint = () => {
+    const hinted = window.__stellarisHistoryNavigation === true
+    clearHistoryNavigationHint()
+    return hinted
+  }
+
+  const setScrollRevealMode = (mode = SCROLL_REVEAL_MODE.ANIMATE) => {
+    stellaris.pluginsConfig.scrollRevealMode = mode
+    const html = document.documentElement
+    const bypass = mode === SCROLL_REVEAL_MODE.BYPASS
+    html.classList.toggle(scrollRevealBypassClass, bypass)
+    if (bypass) {
+      html.classList.add('sr-loaded')
+    }
+  }
+
+  const enableImmediateRevealMode = () =>
+    setScrollRevealMode(SCROLL_REVEAL_MODE.BYPASS)
+  const disableImmediateRevealMode = () =>
+    setScrollRevealMode(SCROLL_REVEAL_MODE.ANIMATE)
+
+  const consumePendingNavigationMode = () => {
+    const pending = stellaris.pluginsConfig.pendingHistoryNavigation
+      ? PAGE_LIFECYCLE.HISTORY
+      : null
+    stellaris.pluginsConfig.pendingHistoryNavigation = false
+    return pending
+  }
 
   const isScrollRevealManaged = (el) => {
     // ScrollReveal v4 会给元素打 data-sr-id；有它就不要手动改写显示状态
     return el && el.hasAttribute && el.hasAttribute('data-sr-id')
   }
 
+  const clearRevealInlineStyles = (el) => {
+    if (!el) return
+    ;[
+      'opacity',
+      'transform',
+      'visibility',
+      'transition',
+      'webkitTransition',
+    ].forEach((prop) => {
+      el.style[prop] = null
+    })
+  }
+
+  const revealElementImmediately = (el) => {
+    if (!el) return
+    clearRevealInlineStyles(el)
+    el.style.visibility = 'visible'
+    el.style.opacity = '1'
+    el.style.transform = 'none'
+  }
+
   // 滚动保护逻辑：确保快速滚动或点击 TOC 时元素能正常显示
-  const forceRevealVisibleElements = () => {
+  const forceRevealVisibleElements = (options = {}) => {
+    const { includeManaged = false } = options
     const viewportHeight = window.innerHeight
     document.querySelectorAll('body .reveal').forEach((el) => {
       const rect = el.getBoundingClientRect()
       if (rect.top < viewportHeight + 200 && rect.bottom > -100) {
         // ScrollReveal 正常工作时不要干预它管理的元素，否则会导致动画“瞬间完成/抢跑”。
         const srReady = 'ScrollReveal' in window
-        if (srReady && isScrollRevealManaged(el)) return
+        if (!includeManaged && srReady && isScrollRevealManaged(el)) return
 
-        // 只在元素依然被 visibility:hidden 卡住时修复；不动 opacity/transform。
         const computed = window.getComputedStyle(el)
-        if (computed.visibility === 'hidden') el.style.visibility = 'visible'
+        const isBlocked =
+          computed.visibility === 'hidden' || computed.opacity === '0'
+        if (!isBlocked) return
+
+        revealElementImmediately(el)
       }
     })
   }
 
-  const forceRevealRestoredViewport = () => {
-    const viewportHeight = window.innerHeight
-    document.querySelectorAll('body .reveal').forEach((el) => {
-      const rect = el.getBoundingClientRect()
-      if (rect.top < viewportHeight + 200 && rect.bottom > -100) {
-        el.style.visibility = 'visible'
-        el.style.opacity = '1'
-        el.style.transform = 'none'
+  const runAfterPaint = (fn) => {
+    if ('requestAnimationFrame' in window) {
+      requestAnimationFrame(() => requestAnimationFrame(fn))
+    } else {
+      setTimeout(fn, 16)
+    }
+  }
+
+  const prepareRevealForRestoredPage = () => {
+    enableImmediateRevealMode()
+  }
+
+  const prepareRevealForFreshNavigation = () => {
+    disableImmediateRevealMode()
+    if (isScrollRevealConfigured()) {
+      document.documentElement.classList.remove('sr-loaded')
+    }
+  }
+
+  const prepareRevealForSamePage = () => {
+    return
+  }
+
+  const prepareRevealForLifecycle = (mode = PAGE_LIFECYCLE.NAVIGATE) => {
+    if (mode === PAGE_LIFECYCLE.SAME_PAGE) {
+      prepareRevealForSamePage()
+      return {
+        loadAssets: false,
+        skipLoads: [],
+        skipPlugins: [],
       }
-    })
+    }
+
+    if (mode === PAGE_LIFECYCLE.HISTORY) {
+      prepareRevealForRestoredPage()
+      return {
+        loadAssets: true,
+        skipLoads: ['scrollReveal'],
+        skipPlugins: ['scrollReveal'],
+      }
+    }
+
+    if (mode === PAGE_LIFECYCLE.BFCACHE) {
+      prepareRevealForRestoredPage()
+      return {
+        loadAssets: false,
+        skipLoads: ['scrollReveal'],
+        skipPlugins: ['scrollReveal'],
+      }
+    }
+
+    prepareRevealForFreshNavigation()
+    return {
+      loadAssets: true,
+      skipLoads: [],
+      skipPlugins: [],
+    }
   }
   
   let scrollProtectionHandler = null
@@ -788,6 +991,9 @@
 
     // 若启用了 ScrollReveal，让它接管动画；滚动保护会导致元素提前变为 visible，从而动画“过快/跳过”。
     // 仅在 SR 未启用或库没加载（可能被拦截）时，短暂启用滚动保护避免白屏。
+    if (stellaris.pluginsConfig.scrollRevealMode === SCROLL_REVEAL_MODE.BYPASS) {
+      return
+    }
     if (isScrollRevealConfigured() && 'ScrollReveal' in window) {
       return
     }
@@ -806,26 +1012,151 @@
       }
     }, 3000)
   }
+
+  const runPluginLifecycle = (skipPlugins = []) => {
+    if (skipPlugins.length > 0) {
+      stellaris.safeCall('initPlugins.skip', () =>
+        stellaris.initPlugins({ skip: skipPlugins })
+      )
+    } else {
+      stellaris.safeCall('initPlugins', stellaris.initPlugins)
+    }
+  }
+
+  const refreshPageAfterSetup = () => {
+    const refresh = () => {
+      stellaris.safeCall('init.lazyLoad.refresh', () => stellaris.init.lazyLoad())
+      window.dispatchEvent(new Event('scroll'))
+    }
+    runAfterPaint(refresh)
+    setTimeout(refresh, 120)
+  }
+
+  const runPageSetup = ({
+    mode,
+    loadAssets,
+    skipLoads = [],
+    skipPlugins = [],
+    fullLoad = false,
+  }) => {
+    if (fullLoad) {
+      stellaris.safeCall('loadAllPlugins', () =>
+        stellaris.loadAllPlugins({ skip: skipLoads })
+      )
+      stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
+      runPluginLifecycle(skipPlugins)
+      stellaris.safeCall('setupScrollProtection', setupScrollProtection)
+      refreshPageAfterSetup()
+      return
+    }
+
+    if (loadAssets) {
+      stellaris.safeCall('loadNeededCSS', stellaris.loadNeededCSS)
+      stellaris.safeCall('loadNeededPlugins', () =>
+        stellaris.loadNeededPlugins({ skip: skipLoads })
+      )
+      stellaris.safeCall('load.themePlugins', stellaris.load.themePlugins)
+    }
+
+    stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
+    runPluginLifecycle(skipPlugins)
+    stellaris.safeCall('setupScrollProtection', setupScrollProtection)
+    refreshPageAfterSetup()
+  }
+
+  const classifyInstantPageChange = () => {
+    const nextPageKey = getCurrentPageKey()
+    const prevPageKey = stellaris.pluginsConfig.lastPageKey
+    const pendingMode = consumePendingNavigationMode()
+    stellaris.pluginsConfig.lastPageKey = nextPageKey
+    if (prevPageKey === nextPageKey) {
+      return null
+    }
+    return pendingMode || PAGE_LIFECYCLE.NAVIGATE
+  }
+
+  const pageLifecycle = {
+    log(mode) {
+      const labels = {
+        [PAGE_LIFECYCLE.BOOT]: 'New page loaded',
+        [PAGE_LIFECYCLE.NAVIGATE]: 'Page loaded',
+        [PAGE_LIFECYCLE.HISTORY]: 'Page restored from history',
+        [PAGE_LIFECYCLE.BFCACHE]: 'Page restored from bfcache',
+        [PAGE_LIFECYCLE.SAME_PAGE]: 'Skip duplicated page change',
+      }
+      console.log(`${labels[mode]}: ${window.location.pathname}`)
+    },
+    run(mode, options = {}) {
+      const { syncPageKey = false, defer = false, fullLoad = false } = options
+      if (syncPageKey) {
+        syncCurrentPageKey()
+      }
+      this.log(mode)
+      const lifecycleOptions = prepareRevealForLifecycle(mode)
+      const execute = () =>
+        runPageSetup({
+          mode,
+          loadAssets: lifecycleOptions.loadAssets,
+          skipLoads: lifecycleOptions.skipLoads,
+          skipPlugins: lifecycleOptions.skipPlugins,
+          fullLoad,
+        })
+      if (defer) {
+        runAfterPaint(execute)
+      } else {
+        execute()
+      }
+    },
+    boot() {
+      const mode =
+        consumeHistoryNavigationHint() || getNavigationType() === 'back_forward'
+          ? PAGE_LIFECYCLE.HISTORY
+          : PAGE_LIFECYCLE.BOOT
+      this.run(mode, {
+        syncPageKey: true,
+        fullLoad: true,
+      })
+    },
+    onInstantChange() {
+      const mode = classifyInstantPageChange()
+      if (!mode) return
+      this.run(mode)
+    },
+    onBFCacheRestore() {
+      stellaris.pluginsConfig.pendingHistoryNavigation = false
+      this.run(PAGE_LIFECYCLE.BFCACHE, {
+        syncPageKey: true,
+        defer: true,
+      })
+    },
+  }
   
   const restorePageFromBFCache = () => {
-    console.log(`Page restored from bfcache: ${window.location.pathname}`)
-    stellaris.safeCall('armScrollRevealFallback', stellaris.armScrollRevealFallback)
-    // 浏览器回退恢复时不会重跑 load/InstantClick change，先解除首屏隐藏态避免主体空白。
-    forceRevealRestoredViewport()
-    const rerunLifecycle = () => {
-      stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
-      stellaris.safeCall('initPlugins', stellaris.initPlugins)
-      stellaris.safeCall('setupScrollProtection', setupScrollProtection)
-    }
-    if ('requestAnimationFrame' in window) {
-      requestAnimationFrame(() => requestAnimationFrame(rerunLifecycle))
-    } else {
-      setTimeout(rerunLifecycle, 0)
-    }
+    pageLifecycle.onBFCacheRestore()
   }
   
   // 立即启用滚动保护
   setupScrollProtection()
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const currentPageLink = getCurrentPageRouteLink(event)
+      if (!currentPageLink) return
+      currentPageLink.setAttribute('data-no-instant', 'true')
+      event.preventDefault()
+    },
+    true
+  )
+
+  window.addEventListener(
+    'popstate',
+    () => {
+      stellaris.pluginsConfig.pendingHistoryNavigation = true
+      markHistoryNavigationHint()
+    },
+    true
+  )
 
   window.addEventListener('pagehide', () => {
     // 如果在切页时脚本还没真正加载完成，不要缓存住旧 Promise，避免返回后无法重试。
@@ -836,6 +1167,7 @@
 
   window.addEventListener('pageshow', (event) => {
     if (event.persisted) {
+      clearHistoryNavigationHint()
       restorePageFromBFCache()
     }
   })
@@ -847,11 +1179,8 @@
   
   // 最终兜底：10秒后无论如何都强制显示所有 reveal 元素，防止任何模块阻塞导致白屏
   setTimeout(() => {
-    // 如果 ScrollReveal 正常加载，就不要全量 forceRevealAll（会抹掉后续滚动动画）。
-    // 仅在 SR 没加载/没启用时才使用全量兜底。
-    const srEnabled = !!stellar.plugins?.scrollreveal
-    const srReady = 'ScrollReveal' in window
-    if (srEnabled && srReady) return
+    if (document.querySelector('body .reveal') === null) return
+    if (document.documentElement.classList.contains('sr-loaded')) return
     stellaris.forceRevealAll()
   }, 10000)
 
@@ -861,7 +1190,6 @@
   const bootOnce = () => {
     if (booted) return
     booted = true
-    stellaris.safeCall('loadAllPlugins', stellaris.loadAllPlugins)
     stellaris.safeCall('initOnFirstLoad', stellaris.initOnFirstLoad)
   }
   // main.js 一般在页面底部引入，此时 DOM 已可用；直接启动可避免被后续脚本阻塞。
