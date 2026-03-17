@@ -6,6 +6,10 @@ html
   font-size: $fs-root
   -webkit-text-size-adjust: 100%
   -ms-text-size-adjust: 100%
+  overflow-y: scroll
+  @supports (scrollbar-gutter: stable)
+    overflow-y: auto
+    scrollbar-gutter: stable
   if hexo-config('style.smooth_scroll')
     scroll-behavior: smooth
 body
