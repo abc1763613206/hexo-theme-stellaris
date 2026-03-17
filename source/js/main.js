@@ -179,13 +179,22 @@
       },
       scrollReveal: () => {
         if (stellar.plugins.scrollreveal) {
+          if ('ScrollReveal' in window) {
+            return Promise.resolve().then(() => stellaris.init.scrollReveal())
+          }
           if (stellaris.pluginsConfig.scrollRevealPromise) {
             return stellaris.pluginsConfig.scrollRevealPromise
           }
           stellaris.pluginsConfig.scrollRevealPromise = stellar
             .loadScript(stellar.plugins.scrollreveal.js)
-            .then(stellaris.init.scrollReveal)
+            .then(() => {
+              if (!('ScrollReveal' in window)) {
+                throw new Error('ScrollReveal API unavailable after script load')
+              }
+              return stellaris.init.scrollReveal()
+            })
             .catch((e) => {
+              stellaris.pluginsConfig.scrollRevealPromise = null
               // ScrollReveal 加载失败时，强制显示所有元素
               console.warn('ScrollReveal failed to load, forcing reveal', e)
               // 取消 sr-loaded，保留 CSS fallback 动画兜底
@@ -569,7 +578,10 @@
 
         const selector = 'body .reveal'
         const elements = document.querySelectorAll(selector)
-        if (elements.length === 0) return
+        if (elements.length === 0) {
+          document.documentElement.classList.remove('sr-loaded')
+          return
+        }
 
         let sr
         try {
@@ -690,13 +702,20 @@
         stellaris.safeCall(`init.${plugin}`, () => stellaris.init[plugin]())
       })
     },
+    armScrollRevealFallback: () => {
+      if (stellar.plugins.scrollreveal) {
+        document.documentElement.classList.remove('sr-loaded')
+      }
+    },
     initOnFirstLoad: () => {
       console.log(`New page loaded: ${window.location.pathname}`)
+      stellaris.safeCall('armScrollRevealFallback', stellaris.armScrollRevealFallback)
       stellaris.safeCall('loadNeededPlugins', stellaris.loadNeededPlugins)
       stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
     },
     initOnPageChange: () => {
       console.log(`Page loaded: ${window.location.pathname}`)
+      stellaris.safeCall('armScrollRevealFallback', stellaris.armScrollRevealFallback)
       stellaris.safeCall('loadNeededCSS', stellaris.loadNeededCSS)
       stellaris.safeCall('loadNeededPlugins', stellaris.loadNeededPlugins)
       stellaris.safeCall('load.themePlugins', stellaris.load.themePlugins)
@@ -711,7 +730,8 @@
         el.style.visibility = 'visible'
         el.style.opacity = '1'
         el.style.transform = 'none'
-        el.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out'
+        el.style.transition = null
+        el.style.webkitTransition = null
       })
     },
   }
@@ -735,6 +755,18 @@
         // 只在元素依然被 visibility:hidden 卡住时修复；不动 opacity/transform。
         const computed = window.getComputedStyle(el)
         if (computed.visibility === 'hidden') el.style.visibility = 'visible'
+      }
+    })
+  }
+
+  const forceRevealRestoredViewport = () => {
+    const viewportHeight = window.innerHeight
+    document.querySelectorAll('body .reveal').forEach((el) => {
+      const rect = el.getBoundingClientRect()
+      if (rect.top < viewportHeight + 200 && rect.bottom > -100) {
+        el.style.visibility = 'visible'
+        el.style.opacity = '1'
+        el.style.transform = 'none'
       }
     })
   }
@@ -775,8 +807,38 @@
     }, 3000)
   }
   
+  const restorePageFromBFCache = () => {
+    console.log(`Page restored from bfcache: ${window.location.pathname}`)
+    stellaris.safeCall('armScrollRevealFallback', stellaris.armScrollRevealFallback)
+    // 浏览器回退恢复时不会重跑 load/InstantClick change，先解除首屏隐藏态避免主体空白。
+    forceRevealRestoredViewport()
+    const rerunLifecycle = () => {
+      stellaris.safeCall('initPageComponents', stellaris.initPageComponents)
+      stellaris.safeCall('initPlugins', stellaris.initPlugins)
+      stellaris.safeCall('setupScrollProtection', setupScrollProtection)
+    }
+    if ('requestAnimationFrame' in window) {
+      requestAnimationFrame(() => requestAnimationFrame(rerunLifecycle))
+    } else {
+      setTimeout(rerunLifecycle, 0)
+    }
+  }
+  
   // 立即启用滚动保护
   setupScrollProtection()
+
+  window.addEventListener('pagehide', () => {
+    // 如果在切页时脚本还没真正加载完成，不要缓存住旧 Promise，避免返回后无法重试。
+    if (!('ScrollReveal' in window)) {
+      stellaris.pluginsConfig.scrollRevealPromise = null
+    }
+  })
+
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+      restorePageFromBFCache()
+    }
+  })
   
   // 监听 hash 变化（点击 TOC）
   window.addEventListener('hashchange', () => {
