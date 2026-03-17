@@ -61,19 +61,35 @@ disable-select()
 
 
 scrollbar($w = 4px, $b = 2px, $c = var(--text-meta), $h = var(--text-p3))
+  if $w == 0
+    scrollbar-width: none
+  else
+    scrollbar-width: thin
+  scrollbar-color: $c transparent
   &::-webkit-scrollbar
     height: $w
     width: $w
+  &::-webkit-scrollbar-track
+    background: transparent
   &::-webkit-scrollbar-track-piece
     background: transparent
   &::-webkit-scrollbar-thumb
     background: $c
     cursor: pointer
     border-radius: $b
+    if $w != 0
+      min-height: 32px
+      border: 2px solid transparent
+      background-clip: padding-box
+      trans1 background
     &:hover
       background: $h
-
-
+  &::-webkit-scrollbar-button
+    display: none
+    width: 0
+    height: 0
+  &::-webkit-scrollbar-corner
+    background: transparent
 scrollbar-codeblock($height = 4px)
   &::-webkit-scrollbar
     height: $height
