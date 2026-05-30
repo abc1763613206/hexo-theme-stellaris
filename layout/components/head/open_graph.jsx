@@ -100,7 +100,7 @@ const OpenGraphArguments = (props) => {
     }
   }
   // Prepend cover image so it becomes the primary og:image / twitter:image
-  if (page.cover && typeof page.cover === 'string' && page.layout === 'post') {
+  if (page.cover && typeof page.cover === 'string') {
     images.unshift(page.cover)
   }
 
