@@ -99,23 +99,20 @@ const OpenGraphArguments = (props) => {
       }
     }
   }
+  // Prepend cover image so it becomes the primary og:image / twitter:image
+  if (page.cover && typeof page.cover === 'string' && page.layout === 'post') {
+    images.unshift(page.cover)
+  }
+
   images = images
     .map((path) => new URL(path, url || config.url).toString())
     .filter((url) => !url.startsWith('data:'))
 
   let result = []
 
-  if (
-    page.cover !== undefined &&
-    page.layout === 'post' &&
-    page.cover.includes('/')
-  ) {
-    result.push(<OG name='og:image' content={page.cover} escape={false} key={page.cover} />)
-  } else {
-    images.forEach((path) => {
-      result.push(<OG name='og:image' content={path} escape={false} key={path} />)
-    })
-  }
+  images.forEach((path) => {
+    result.push(<OG name='og:image' content={path} escape={false} key={path} />)
+  })
 
   /*
     if (description) {
@@ -192,19 +189,9 @@ const OpenGraphArguments = (props) => {
       <OG name='twitter:image' content={twitter_image} escape={false} key={twitter_image} />
     )
   } else if (images.length) {
-    if (
-      page.cover !== undefined &&
-      page.layout === 'post' &&
-      page.cover.includes('/')
-    ) {
-      result.push(
-        <OG name='twitter:image' content={page.cover} escape={false} key={page.cover} />
-      )
-    } else {
-      result.push(
-        <OG name='twitter:image' content={images[0]} escape={false} key={images[0]} />
-      )
-    }
+    result.push(
+      <OG name='twitter:image' content={images[0]} escape={false} key={images[0]} />
+    )
   }
 
   if (props.twitter_id) {
